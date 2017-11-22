@@ -1,0 +1,96 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <div class="header">
+        <div class="title"></div>
+    </div>
+    <title>Lifeboat & Davit Service Job</title>
+    {{ mmr_css }}
+    <style type="text/css">
+        table { page-break-inside:auto }
+        tr    { page-break-inside:avoid; page-break-after:auto }
+        thead { display:table-header-group }
+
+    </style>
+</head>
+<body>
+<div class="header-region">
+    <div class="lifeboat-pdf-header"><h1>SHM Shipcare</h1></div>
+    <div class="logo"><img class="logo-img" src="/sites/default/files/logo.png"></div>
+</div>
+<div class="lifeboat-certificate-title">
+    <span>LIFEBOAT OEM RETURN</span>
+</div>
+{{ cover }}
+<table class="lifeboat-oem-report">
+    <thead>
+    <tr>
+        <th>Report ID</th>
+        <th>Batch</th>
+        <th>Manufacturer</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>{{ report_id }}</td>
+        <td>{{ month_year }}</td>
+        <td>{{ manufacturer }}</td>
+    </tr>
+    </tbody>
+</table>
+<table class="job-details" cellspacing="0" cellpadding="0">
+    <thead>
+    <tr>
+        <th>SHM Certificate No</th>
+        <th>Vessel Name</th>
+        <th>Company</th>
+        <th>Station</th>
+        <th>Davit Type</th>
+        <th>Davit Sr. No./Davit OEM Name</th>
+        <th>Boat Type</th>
+        <th>Boat Sr. No./Boat OEM Name</th>
+        <th>Winch Type</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for rpt in report %}
+
+        {% for lineItem in rpt['line_items'] %}
+            <tr>
+                {% if loop.index0 == 0 %}
+                    <td rowspan="{{ rpt['line_items'] | length }}">{{ rpt['job_id'] }}</td>
+                    <td rowspan="{{ rpt['line_items'] | length }}">{{ rpt['vessel_name'] }}</td>
+                    <td rowspan="{{ rpt['line_items'] | length }}">{{ rpt['company_name'] }}</td>
+                {% endif %}
+                <td>{{ lineItem['station'] }}</td>
+                <td>{{ lineItem['davit_type'] }}</td>
+				
+                {% if lineItem['davit_sr_no'] is empty %}
+				<td> {{ lineItem['davit_oem_name'] }}</td>
+				{% elseif lineItem['davit_oem_name'] is empty %}
+				<td>{{ lineItem['davit_sr_no'] }}</td>
+				{% elseif lineItem['davit_sr_no'] is not empty and lineItem['davit_oem_name'] is not empty%}
+				<td>{{ lineItem['davit_sr_no'] }} / {{ lineItem['davit_oem_name'] }}</td>
+				{% endif %}
+				
+                <td>{{ lineItem['boat_type'] }}</td>
+				
+                {% if lineItem['boat_sr_no'] is empty %}
+				<td>{{ lineItem['boat_oem_name'] }}</td>
+				{% elseif lineItem['boat_oem_name'] is empty %}
+				<td>{{ lineItem['boat_sr_no'] }}</td>
+				{% elseif lineItem['boat_sr_no'] is not empty and lineItem['boat_oem_name'] is not empty %}
+				<td>{{ lineItem['boat_sr_no'] }} / {{ lineItem['boat_oem_name'] }}</td>
+				{% endif %}
+				
+                <td>{{ lineItem['winch_type'] }}</td>
+            </tr>
+        {% endfor %}
+
+
+    {% endfor %}
+    </tbody>
+
+</table>
+</body>
+</html>

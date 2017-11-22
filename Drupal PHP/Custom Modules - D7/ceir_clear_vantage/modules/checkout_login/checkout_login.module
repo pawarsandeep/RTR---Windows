@@ -1,0 +1,248 @@
+<?php
+
+/**
+  * @file
+  * Enforce user to login using Clear Vantage credentials before checkout
+  */
+
+function checkout_login_commerce_checkout_page_info() {
+
+  $checkout_pages['login'] = array(
+    'name' => t('Customer Login'),
+    'title' => t('Customer Login'),
+    'weight' => -1,
+    'status_cart' => FALSE,
+    'buttons' => TRUE,
+  );
+
+  return $checkout_pages;
+}
+
+/**
+ * Implements hook_hook_form_alter to changed weight .
+ *
+ */
+function checkout_login_form_alter(&$form, &$form_state, $form_id) {
+  global $user;
+  if ($form_id === 'user_profile_form' ) { 
+	if(!isset($form['#user_category']) || (isset($form['#user_category']) && $form['#user_category'] == 'account')){
+
+	  $form['revision_information']['#weight'] = 50;
+	}
+  }
+}
+
+/**
+ * Implements hook_hook_form_alter.
+ *
+ */
+
+function checkout_login_form_commerce_checkout_form_alter(&$form, &$form_state) {
+
+  global $user;
+
+  if (!$user->uid && !empty($form['account'])) {
+
+	$form['account']['login']['choose'] = array(
+	 '#type' => 'radios',
+	 '#title' => 'Choose how you want to checkout',
+	 '#options' => array(
+	 	'anonymous' => t('Continue without login'),
+	 	'login'		=> t('Login with an existing account'),
+	    ),
+	'#ajax' => array(
+	  'wrapper' => 'account-login-container',
+	  'callback' => 'checkout_login_form_refresh',
+	   ),
+	'#weight' => -1
+	);
+
+   if (!isset($form_state['values']['account']['login'])) {
+      $form['account']['login']['mail']['#access'] = FALSE;
+      $form['account']['login']['mail_confirm']['#access'] = FALSE;
+    }
+   elseif ($form_state['values']['account']['login']['choose'] == 'anonymous') {
+      // Nothing to do.
+    }
+   elseif ($form_state['values']['account']['login']['choose'] == 'login') {
+
+      $form['account']['login']['password'] = array(
+        '#type' => 'password',
+        '#title' => t('Password'),
+        '#required' => TRUE,
+      );
+      $form['account']['login']['login_now'] = array(
+        '#type' => 'submit',
+        '#value' => t('Login now'),
+        '#limit_validation_errors' => array(array('account')),
+        '#validate' => array('checkout_login_form_validate'),
+        '#submit' => array('checkout_login_form_submit'),
+      );
+    }
+  }
+
+
+}
+
+
+function checkout_login_form_refresh($form, $form_state){
+
+	return $form['account']['login'];
+
+}
+
+function checkout_login_form_validate(&$form, &$form_state){
+
+  $checkout_username = $form_state['values']['account']['login']['mail'];
+  $checkout_password = $form_state['values']['account']['login']['password'];
+  $clear_vantage_user_roles = array();
+  $clear_vantage_user_field = array();
+  $clear_vantage_user_member = user_role_load_by_name('Member');
+  $clear_vantage_response_values = array();
+
+  $cv_login_url_main =  variable_get('end_point');
+  $cv_login_url_trail = "&INCLUDEADDR=&WMT=None&WRP=loginaccepted.xml&WDP=logindenied.xml";
+  $clear_vantage_login_requst_url = $cv_login_url_main."?WEBUSERID=".$checkout_username."&WEBUSERPASSWORD=".$checkout_password.$cv_login_url_trail;
+
+  $curl = curl_init();
+  curl_setopt($curl, CURLOPT_URL, $clear_vantage_login_requst_url);
+  curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+  $response = curl_exec($curl);
+  $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+  curl_close($curl);
+  $form_state['response'] = $response;
+
+  if($httpCode == 200){
+	 $response_value = new SimpleXMLElement($response);
+
+  if($response_value->LoginStatus == "Accepted" ){
+
+  	$account = user_load_by_name($checkout_username);
+
+  	$clear_vantage_response_values['email'] = (string) $response_value->MemberData->email;
+	$clear_vantage_response_values['memberid'] = (string) $response_value->MemberData->memberid;
+	$clear_vantage_response_values['orgcd'] = (string) $response_value->MemberData->orgcd;
+	$clear_vantage_response_values['province'] = (string) $response_value->MemberData->chapterid;
+	$clear_vantage_response_values['first_name'] = (string) $response_value->MemberData->firstname;
+	$clear_vantage_response_values['last_name'] = (string) $response_value->MemberData->lastname;
+	$clear_vantage_response_values['member_type'] = (string) $response_value->MemberData->membertype;
+	$clear_vantage_response_values['is_member'] = (string) $response_value->MemberData->ismember;
+	$clear_vantage_response_values['paid_thru'] = (string)$response_value->MemberData->PaidThru;
+
+	if($account) {
+
+	  $form_state['uid'] = $account->uid;
+	  $clear_vantage_user_field = compare_cv_response_values($account, $clear_vantage_response_values);
+	  if (!empty($clear_vantage_response_values['is_member']) && isset($clear_vantage_response_values['is_member'])){
+
+        if($clear_vantage_response_values['is_member'] == 'Y'){
+
+           if(!empty($clear_vantage_response_values['paid_thru']) && isset($clear_vantage_response_values['paid_thru'])){
+
+             $clear_vantage_user_field['roles'] = (new DateTime("now") <= new DateTime($clear_vantage_response_values['paid_thru'])? add_member_role_to_user($account, 'Member') : remove_member_role_from_user($account, 'Member'));
+          }
+          else{
+
+          	 $clear_vantage_user_field['roles'] = add_member_role_to_user($account, 'Member');
+          }
+		}
+
+		else{
+
+	      $clear_vantage_user_field['roles'] = remove_member_role_from_user($account, 'Member');
+		}
+	 }
+
+	user_save($account, $clear_vantage_user_field);
+
+
+	}
+	else{
+
+	  $clear_vantage_new_user_field = cv_set_new_user_fields($clear_vantage_response_values, $checkout_username, $checkout_password );
+
+      if($clear_vantage_response_values['is_member'] == 'Y' && !empty($clear_vantage_response_values['is_member']) && isset($clear_vantage_response_values['is_member']) ){
+
+        if(!empty($clear_vantage_response_values['paid_thru']) && isset($clear_vantage_response_values['paid_thru'])){
+
+		  $clear_vantage_new_user_field['roles'] = (new DateTime("now") <= new DateTime($clear_vantage_response_values['paid_thru'])? array(DRUPAL_AUTHENTICATED_RID => 'authenticated user', $clear_vantage_user_member->rid => 'Member',) : $clear_vantage_new_user_field['roles'] = array(DRUPAL_AUTHENTICATED_RID => 'authenticated user', ));
+      	}
+      	else{
+		  $clear_vantage_new_user_field['roles'] = array(DRUPAL_AUTHENTICATED_RID => 'authenticated user', $clear_vantage_user_member->rid => 'Member',);
+      	}
+
+	  }
+
+     else{
+
+	   $clear_vantage_new_user_field['roles'] = array(DRUPAL_AUTHENTICATED_RID => 'authenticated user', );
+	 }
+      $account = user_save('', $clear_vantage_new_user_field);
+	  if ($account) {
+
+		$form_state['uid'] = $account->uid;
+
+	  }
+
+
+	}
+  }
+  else{
+
+  	$form_state['uid'] = user_authenticate($checkout_username, $checkout_password);
+	if($form_state['uid'] == FALSE){
+
+	  watchdog('ceir_clear_vantage', 'response: %response for user %name', array('%response' => (string)($response), '%name' => $clear_vantage_username));
+
+	}
+
+  }
+}
+
+else{
+  form_set_error('account][login][mail', "The website encountered an unexpected error and the site support staff has been notified. Please try again later.");
+
+  $language = language_default();
+  $to = variable_get('clear_vantage_mail');
+  $from = variable_get('site_mail');
+  $send = TRUE;
+  $module = 'ceir_clear_vantage';
+  $key = 'cv_error_mail';
+  $result = drupal_mail($module, $key, $to, $language, NULL, $from, $send);
+
+
+}
+
+
+}
+
+
+function checkout_login_form_submit($form, &$form_state){
+  global $user;
+ // drupal_set_message("submit called");
+  if (!empty($form_state['uid'])) {
+  $user = user_load($form_state['uid']);
+  user_login_finalize($form_state);
+  watchdog('ceir_clear_vantage', 'response: %response', array('%response' => (string)($form_state['response'])));
+  commerce_cart_order_convert($form_state['order'], $user);
+  unset($form_state['uid']);
+
+  }
+  $form_state['rebuild'] = TRUE;
+
+}
+
+function checkout_login_commerce_checkout_page_info_alter(&$pages) {
+
+  if(!empty($pages['login'])) {
+    $pages['login']['submit_value'] = t('Continue');
+  }
+
+  if(!empty($pages['checkout'])) {
+    $pages['checkout']['submit_value'] = t('Continue');
+  }
+  if(!empty($pages['review'])) {
+    $pages['review']['submit_value'] = t('Submit');
+  }
+}
+

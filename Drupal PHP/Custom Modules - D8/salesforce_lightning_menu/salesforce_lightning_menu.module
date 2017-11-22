@@ -1,0 +1,28 @@
+<?php
+
+/*function salesforce_lightning_menu_theme() {
+  return array(
+      'sf_lightning_menu' => array(
+          'menus' => NULL,
+      ),
+  );
+}
+*/
+function salesforce_lightning_menu_theme_registry_alter(&$registry) {
+  $a = 10;
+  if(!empty($registry['menu__main'])) {
+    $registry['menu__main']['path'] = drupal_get_path('module', 'salesforce_lightning_menu') . '/templates';
+    //$registry['menu__main']['template'] = 'sf-lightning-menu';
+    //$registry['menu__main']['type'] = 'module';
+    //$registry['menu__main']['theme'] = 'modules/salesforce_lightning-menu';
+    //$registry['menu__main']['preprocess functions'] = array();
+  }
+}
+
+function salesforce_lightning_menu_page_attachments(&$attachments) {
+  $attachments['#attached']['library'][] = 'salesforce_lightning_menu/salesforce_lightning_menu';
+}
+
+function salesforce_lightning_menu_preprocess_html($variables) {
+  $variables['attributes']['class'][] = 'sidebar-mini';
+}

@@ -1,0 +1,7 @@
+name = Ceir Clear Vantage
+description =  Ceir integration with clear vantage
+core = 7.x
+package = Ceir
+
+
+

@@ -1,0 +1,5 @@
+name: 'SHM Angular'
+description: 'Provides integration with Angular'
+package: SHM
+core: 8.x
+type: module

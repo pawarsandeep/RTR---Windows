@@ -1,0 +1,70 @@
+h2,h1{margin:0px;padding:0}
+html{
+    margin:0px;
+
+}
+body
+{
+    font-family: barnaregular;
+    font-weight:normal;
+    margin:15px;
+    padding:5px;
+    border:1px solid black;
+}
+table, td, th{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+table.job-details {
+    table-layout:fixed;
+    width:100%;
+
+}
+.header-region
+{
+	height:90px!important;
+}
+.lifeboat-pdf-header
+{
+	display:inline-block;
+	width:80%;
+}
+.logo
+{
+	display:inline-block;
+	padding-top:10px!important;
+}
+.logo-img
+	{
+		width:130px;
+		height:70px;
+	}
+.lifeboat-pdf-header h1 {
+    font-size: 3em;
+	margin-top: -10px!important;
+}
+.lifeboat-certificate-title {
+    text-align: center;
+}
+.lifeboat-certificate-title span {
+    font-size: 29px;
+}
+table.job-details th {
+    background-color: #f8f8f8;
+}
+td {
+    font-size: 12px;
+    word-wrap: break-word;
+    text-align: center;
+    padding: 2px;
+}
+
+table.lifeboat-oem-report
+{
+    width:100%;
+    padding-bottom:5px;
+}
+table.job-details th, table.lifeboat-oem-report th{
+    background-color: #f8f8f8;
+}

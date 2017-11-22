@@ -1,0 +1,1381 @@
+<base href="/">
+<div name="liferaft-job" ng-app="liferaftJob">
+    <div ng-controller="liferaftForm">
+    <div class="alert alert-success" ng-show="job.showSuccess">
+        <strong>Success!</strong> Job saved successfully.
+    </div>
+        <div class="alert alert-error " ng-show="job.showError">
+            <strong>Error !</strong> Please select the liferaft.
+        </div>
+    <div id="liferaft-autocomplete">
+        <input type="text" ng-model="liferaftAutocompleteSuggestions" placeholder="Liferaft Sr No" auto-complete="getMatchedLiferaft">
+    </div>
+        <button class="btn-primary form-submit liferaft-new-job" type="button" ng-click="addNewLiferaft()">Add New Liferaft</button>
+<form name = 'newLiferaftJob' id="newLiferaftJob" class="new-liferaft-job-njs" >
+    <div class="panel panel-default" id="panel-liferaft-general-details">
+        <div class="panel-heading">
+            Liferaft General Details
+        </div>
+        <div class="panel-body" style="column-count: 2;">
+        <div class="panel-collapse collapse in" id="panel-body-liferaft-general-details">
+            <div class="form-item date-of-inspection">
+                <label class="control-label">Certificate Number</label>
+                <input type="text" class="form-cert-no form-control" ng-model="job.liferaft.field_liferaft_certificate_no" disabled>
+            </div>
+            <div class="form-item date-of-inspection">
+                <label class="control-label">Date Of Inspection</label>
+                <input type="date" class="form-date form-control" ng-model="job.liferaft.field_liferaft_date_inspection">
+            </div>
+            <div class="form-item field-liferaft-previous-inspec" >
+                <label class="control-label">Date of previous Inspection</label>
+                <input type="date" class="form-date form-control" ng-model="job.liferaft.field_liferaft_previous_inspec">
+            </div>
+
+            <div class="form-item field-liferaft-name-vessel" >
+                <label class="control-label">Name of the Vessel</label>
+                <input type="text" class="form-date form-control" ng-model="job.liferaft.vessel.title" disabled>
+            </div>
+            <div class="form-item field-liferaft-vessel-imo-no" >
+                <label class="control-label">Vessel IMO No</label>
+                <input type="text" class="form-date form-control" ng-model="job.liferaft.vessel.field_liferaft_vessel_imo_no" disabled>
+            </div>
+            <div class="form-item field-liferaft-vesel-owner-agent" >
+                <label class="control-label">Vessel Owner/Agent</label>
+                <input type="text" class="form-date form-control" ng-model="job.liferaft.vessel.field_liferaft_vesel_owner_agent" disabled>
+            </div>
+            <div class="form-item field-liferaft-vessel-call-sign" >
+                <label class="control-label">Vessel Call Sign</label>
+                <input type="text" class="form-date form-control" ng-model="job.liferaft.vessel.field_liferaft_vessel_call_sign" disabled>
+            </div>
+            <div class="form-item field-liferaft-flag" >
+                <label class="control-label">Flag</label>
+                <select class="form-select form-control" data-toggle="tooltip" ng-model="job.liferaft.vessel.field_liferaft_flag" disabled><option value="" selected="selected">- None -</option><option value="AF">Afghanistan</option><option value="AX">Åland Islands</option><option value="AL">Albania</option><option value="DZ">Algeria</option><option value="AS">American Samoa</option><option value="AD">Andorra</option><option value="AO">Angola</option><option value="AI">Anguilla</option><option value="AQ">Antarctica</option><option value="AG">Antigua &amp; Barbuda</option><option value="AR">Argentina</option><option value="AM">Armenia</option><option value="AW">Aruba</option><option value="AC">Ascension Island</option><option value="AU">Australia</option><option value="AT">Austria</option><option value="AZ">Azerbaijan</option><option value="BS">Bahamas</option><option value="BH">Bahrain</option><option value="BD">Bangladesh</option><option value="BB">Barbados</option><option value="BY">Belarus</option><option value="BE">Belgium</option><option value="BZ">Belize</option><option value="BJ">Benin</option><option value="BM">Bermuda</option><option value="BT">Bhutan</option><option value="BO">Bolivia</option><option value="BA">Bosnia &amp; Herzegovina</option><option value="BW">Botswana</option><option value="BR">Brazil</option><option value="IO">British Indian Ocean Territory</option><option value="VG">British Virgin Islands</option><option value="BN">Brunei</option><option value="BG">Bulgaria</option><option value="BF">Burkina Faso</option><option value="BI">Burundi</option><option value="KH">Cambodia</option><option value="CM">Cameroon</option><option value="CA">Canada</option><option value="IC">Canary Islands</option><option value="CV">Cape Verde</option><option value="BQ">Caribbean Netherlands</option><option value="KY">Cayman Islands</option><option value="CF">Central African Republic</option><option value="EA">Ceuta &amp; Melilla</option><option value="TD">Chad</option><option value="CL">Chile</option><option value="CN">China</option><option value="CX">Christmas Island</option><option value="CC">Cocos (Keeling) Islands</option><option value="CO">Colombia</option><option value="KM">Comoros</option><option value="CG">Congo - Brazzaville</option><option value="CD">Congo - Kinshasa</option><option value="CK">Cook Islands</option><option value="CR">Costa Rica</option><option value="CI">Côte d’Ivoire</option><option value="HR">Croatia</option><option value="CU">Cuba</option><option value="CW">Curaçao</option><option value="CY">Cyprus</option><option value="CZ">Czech Republic</option><option value="DK">Denmark</option><option value="DG">Diego Garcia</option><option value="DJ">Djibouti</option><option value="DM">Dominica</option><option value="DO">Dominican Republic</option><option value="EC">Ecuador</option><option value="EG">Egypt</option><option value="SV">El Salvador</option><option value="GQ">Equatorial Guinea</option><option value="ER">Eritrea</option><option value="EE">Estonia</option><option value="ET">Ethiopia</option><option value="FK">Falkland Islands</option><option value="FO">Faroe Islands</option><option value="FJ">Fiji</option><option value="FI">Finland</option><option value="FR">France</option><option value="GF">French Guiana</option><option value="PF">French Polynesia</option><option value="TF">French Southern Territories</option><option value="GA">Gabon</option><option value="GM">Gambia</option><option value="GE">Georgia</option><option value="DE">Germany</option><option value="GH">Ghana</option><option value="GI">Gibraltar</option><option value="GR">Greece</option><option value="GL">Greenland</option><option value="GD">Grenada</option><option value="GP">Guadeloupe</option><option value="GU">Guam</option><option value="GT">Guatemala</option><option value="GG">Guernsey</option><option value="GN">Guinea</option><option value="GW">Guinea-Bissau</option><option value="GY">Guyana</option><option value="HT">Haiti</option><option value="HN">Honduras</option><option value="HK">Hong Kong SAR China</option><option value="HU">Hungary</option><option value="IS">Iceland</option><option value="IN">India</option><option value="ID">Indonesia</option><option value="IR">Iran</option><option value="IQ">Iraq</option><option value="IE">Ireland</option><option value="IM">Isle of Man</option><option value="IL">Israel</option><option value="IT">Italy</option><option value="JM">Jamaica</option><option value="JP">Japan</option><option value="JE">Jersey</option><option value="JO">Jordan</option><option value="KZ">Kazakhstan</option><option value="KE">Kenya</option><option value="KI">Kiribati</option><option value="XK">Kosovo</option><option value="KW">Kuwait</option><option value="KG">Kyrgyzstan</option><option value="LA">Laos</option><option value="LV">Latvia</option><option value="LB">Lebanon</option><option value="LS">Lesotho</option><option value="LR">Liberia</option><option value="LY">Libya</option><option value="LI">Liechtenstein</option><option value="LT">Lithuania</option><option value="LU">Luxembourg</option><option value="MO">Macau SAR China</option><option value="MK">Macedonia</option><option value="MG">Madagascar</option><option value="MW">Malawi</option><option value="MY">Malaysia</option><option value="MV">Maldives</option><option value="ML">Mali</option><option value="MT">Malta</option><option value="MH">Marshall Islands</option><option value="MQ">Martinique</option><option value="MR">Mauritania</option><option value="MU">Mauritius</option><option value="YT">Mayotte</option><option value="MX">Mexico</option><option value="FM">Micronesia</option><option value="MD">Moldova</option><option value="MC">Monaco</option><option value="MN">Mongolia</option><option value="ME">Montenegro</option><option value="MS">Montserrat</option><option value="MA">Morocco</option><option value="MZ">Mozambique</option><option value="MM">Myanmar (Burma)</option><option value="NA">Namibia</option><option value="NR">Nauru</option><option value="NP">Nepal</option><option value="NL">Netherlands</option><option value="NC">New Caledonia</option><option value="NZ">New Zealand</option><option value="NI">Nicaragua</option><option value="NE">Niger</option><option value="NG">Nigeria</option><option value="NU">Niue</option><option value="NF">Norfolk Island</option><option value="KP">North Korea</option><option value="MP">Northern Mariana Islands</option><option value="NO">Norway</option><option value="OM">Oman</option><option value="PK">Pakistan</option><option value="PW">Palau</option><option value="PS">Palestinian Territories</option><option value="PA">Panama</option><option value="PG">Papua New Guinea</option><option value="PY">Paraguay</option><option value="PE">Peru</option><option value="PH">Philippines</option><option value="PN">Pitcairn Islands</option><option value="PL">Poland</option><option value="PT">Portugal</option><option value="PR">Puerto Rico</option><option value="QA">Qatar</option><option value="RE">Réunion</option><option value="RO">Romania</option><option value="RU">Russia</option><option value="RW">Rwanda</option><option value="WS">Samoa</option><option value="SM">San Marino</option><option value="ST">São Tomé &amp; Príncipe</option><option value="SA">Saudi Arabia</option><option value="SN">Senegal</option><option value="RS">Serbia</option><option value="SC">Seychelles</option><option value="SL">Sierra Leone</option><option value="SG">Singapore</option><option value="SX">Sint Maarten</option><option value="SK">Slovakia</option><option value="SI">Slovenia</option><option value="SB">Solomon Islands</option><option value="SO">Somalia</option><option value="ZA">South Africa</option><option value="GS">South Georgia &amp; South Sandwich Islands</option><option value="KR">South Korea</option><option value="SS">South Sudan</option><option value="ES">Spain</option><option value="LK">Sri Lanka</option><option value="BL">St. Barthélemy</option><option value="SH">St. Helena</option><option value="KN">St. Kitts &amp; Nevis</option><option value="LC">St. Lucia</option><option value="MF">St. Martin</option><option value="PM">St. Pierre &amp; Miquelon</option><option value="VC">St. Vincent &amp; Grenadines</option><option value="SD">Sudan</option><option value="SR">Suriname</option><option value="SJ">Svalbard &amp; Jan Mayen</option><option value="SZ">Swaziland</option><option value="SE">Sweden</option><option value="CH">Switzerland</option><option value="SY">Syria</option><option value="TW">Taiwan</option><option value="TJ">Tajikistan</option><option value="TZ">Tanzania</option><option value="TH">Thailand</option><option value="TL">Timor-Leste</option><option value="TG">Togo</option><option value="TK">Tokelau</option><option value="TO">Tonga</option><option value="TT">Trinidad &amp; Tobago</option><option value="TA">Tristan da Cunha</option><option value="TN">Tunisia</option><option value="TR">Turkey</option><option value="TM">Turkmenistan</option><option value="TC">Turks &amp; Caicos Islands</option><option value="TV">Tuvalu</option><option value="UM">U.S. Outlying Islands</option><option value="VI">U.S. Virgin Islands</option><option value="UG">Uganda</option><option value="UA">Ukraine</option><option value="AE">United Arab Emirates</option><option value="GB">United Kingdom</option><option value="US">United States</option><option value="UY">Uruguay</option><option value="UZ">Uzbekistan</option><option value="VU">Vanuatu</option><option value="VA">Vatican City</option><option value="VE">Venezuela</option><option value="VN">Vietnam</option><option value="WF">Wallis &amp; Futuna</option><option value="EH">Western Sahara</option><option value="YE">Yemen</option><option value="ZM">Zambia</option><option value="ZW">Zimbabwe</option></select>
+            </div>
+
+            <div class="form-item field-liferaft-manufacturer" >
+                <label class="control-label">Liferaft Manufacturer</label>
+                <input type="text" class="form-date form-control" ng-model="job.liferaft.field_liferaft_manufacturer.title" disabled>
+            </div>
+            <div class="form-item field-liferaft-serial-no" >
+                <label class="control-label">Liferaft Serial Number</label>
+                <input type="text" class="form-date form-control" ng-model="job.liferaft.field_liferaft_serial_no" ng-blur="getLiferaftDetails(job.field_liferaft_serial_no)" disabled>
+            </div>
+            <div class="form-item field-liferaft-model" >
+                <label class="control-label">Model</label>
+                <input type="text" class="form-date form-control" ng-model="job.liferaft.field_liferaft_model" disabled>
+            </div>
+            <div class="form-item field-liferaft-type" >
+                <label class="control-label">Liferaft Type</label>
+                <input type="text" class="form-date form-control" ng-model="job.liferaft.field_liferaft_type.type" disabled>
+            </div>
+            <div class="form-item field-liferaft-capacity" >
+                <label class="control-label">Capacity</label>
+                <input type="text" class="form-date form-control" ng-model="job.liferaft.field_liferaft_type.capacity" disabled>
+            </div>
+            <div class="form-item date-of-manufacturing">
+                <label class="control-label">Date Of Manufacturing</label>
+                <input type="date" class="form-date form-control" ng-model="job.liferaft.field_liferaft_date_manufacturing" disabled>
+            </div>
+            <div class="form-item field-liferaft-survivalpack-type" >
+                <label class="control-label">Survival Pack Type</label>
+                <select class="form-select form-control" data-toggle="tooltip" ng-model="job.liferaft.field_liferaft_survivalpack_type" disabled>
+                    <option value="_none">- None -</option>
+                    <option value="A-Pack">A-Pack Solas</option>
+                    <option value="B-Pack">B-Pack Solas</option>
+                    <option value="Partial Pack">Partial Pack Solas</option>
+                </select>
+            </div>
+            <div class="form-item field-liferaft-certificate-type" >
+                <label class="control-label">Certificate type</label>
+                <select class="form-select form-control" data-toggle="tooltip" ng-model="job.field_liferaft_certificate_type">
+                    <option value="_none">- None -</option>
+                    <option value="OEM">OEM</option>
+                    <option value="Non OEM">Non OEM</option>
+                </select>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default" id="panel-gas-cylinder-details">
+        <div class="panel-heading">
+            <a data-toggle="collapse" href="#panel-body-gas-cylinder-details"><div>GAS CYLINDERS DETAILS</div></a>
+        </div>
+        <div class="panel-collapse collapse" id="panel-body-gas-cylinder-details">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <td>LS No</td>
+                    <td>Cylinder SL No</td>
+                    <td>LPT</td>
+                    <td>PTest Request</td>
+                    <td>Refill Request</td>
+                    <td>Full Weight (Kgs)</td>
+                    <td>Tare Weight (Kgs)</td>
+                    <td>Gas Weight N2 (Kgs)</td>
+                    <td>Gas Weight CO2 (Kgs)</td>
+                    <td>Actual full Weight (Kgs)</td>
+                    <td></td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat ="gas_cylinder in job.gas_cylinders | byDeleteFlag:true" class="animate-repeat">
+                    <td>[[$index + 1]]</td>
+                    <td><input type="text" class="form-date form-control" name="cylinder-sn" ng-model="gas_cylinder.cylinder_sn"></td>
+                    <td><input type="date" class="form-date form-control" name="lpt" ng-model="gas_cylinder.lpt"></td>
+                    <td><select class="form-date form-control" name="ptest-req" ng-model="gas_cylinder.ptest_req"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+                    <td><select class="form-date form-control" name="refill-req" ng-model="gas_cylinder.refill_req"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+                    <td><input type="text" class="form-date form-control" name="fill-weight" ng-model="gas_cylinder.full_weight"></td>
+                    <td><input type="text" class="form-date form-control" name="tare-weight" ng-model="gas_cylinder.tare_weight"></td>
+                    <td><input type="text" class="form-date form-control" name="gas-weight-n2" ng-model="gas_cylinder.gas_weight_n2"></td>
+                    <td><input type="text" class="form-date form-control" name="gas-weight-co2" ng-model="gas_cylinder.gas_weight_co2"></td>
+                    <td><input type="text" class="form-date form-control" name="actual-full-weight" ng-model="gas_cylinder.actual_full_weight"></td>
+                    <td><button class="btn-danger" ng-click="removeGasCylinder(gas_cylinder)">Delete</button></td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="11"><button class="btn-primary" ng-click="addGasCylinder()">Add</button></td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default" id="panel-group-pressure-test">
+        <div class="panel-heading">
+            <a data-toggle="collapse" href="#panel-body-pressure-test"><div>PRESSURE TEST (IN MM/H20)</div></a>
+        </div>
+        <div class="panel-collapse collapse" id="panel-body-pressure-test">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <td rowspan="2"></td>
+                    <td colspan="2">Stretch Time (HH:MM:SS)</td>
+                    <td colspan="2">Temperature (Degree Celsius)</td>
+                    <td colspan="2">Final Time (HH:MM:SS)</td>
+                    <td colspan="2">Reading</td>
+                </tr>
+                <tr>
+                    <td>On</td>
+                    <td>Off</td>
+                    <td>On</td>
+                    <td>Off</td>
+                    <td>On</td>
+                    <td>Off</td>
+                    <td>On</td>
+                    <td>Off</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Upper Chamber</td>
+                    <td><input type="text" class="form-control field_lr_uc_stretch_time_on" ng-model="job.field_lr_uc_stretch_time_on"></td>
+                    <td><input type="text" class="form-control field_lr_uc_stretch_time_off" ng-model="job.field_lr_uc_stretch_time_off"></td>
+                    <td><input type="text" class="form-control field_lr_uc_temp_on" ng-model="job.field_lr_uc_temp_on"></td>
+                    <td><input type="text" class="form-control field_lr_uc_temp_off" ng-model="job.field_lr_uc_temp_off"></td>
+                    <td><input type="text" class="form-control field_lr_uc_final_time_on" ng-model="job.field_lr_uc_final_time_on"></td>
+                    <td><input type="text" class="form-control field_lr_uc_final_time_off" ng-model="job.field_lr_uc_final_time_off"></td>
+                    <td><input type="text" class="form-control field_lr_uc_reading_on" ng-model="job.field_lr_uc_reading_on"></td>
+                    <td><input type="text" class="form-control field_lr_uc_reading_off" ng-model="job.field_lr_uc_reading_off"></td>
+                </tr>
+                <tr>
+                    <td>Lower Chamber</td>
+                    <td><input type="text" class="form-control field_lr_lc_stretch_time_on" ng-model="job.field_lr_lc_stretch_time_on"></td>
+                    <td><input type="text" class="form-control field_lr_lc_stretch_time_off" ng-model="job.field_lr_lc_stretch_time_off"></td>
+                    <td><input type="text" class="form-control field_lr_lc_temp_on" ng-model="job.field_lr_lc_temp_on"></td>
+                    <td><input type="text" class="form-control field_lr_lc_temp_off" ng-model="job.field_lr_lc_temp_off"></td>
+                    <td><input type="text" class="form-control field_lr_lc_final_time_on" ng-model="job.field_lr_lc_final_time_on"></td>
+                    <td><input type="text" class="form-control field_lr_lc_final_time_off" ng-model="job.field_lr_lc_final_time_off"></td>
+                    <td><input type="text" class="form-control field_lr_lc_reading_on" ng-model="job.field_lr_lc_reading_on"></td>
+                    <td><input type="text" class="form-control field_lr_lc_reading_off" ng-model="job.field_lr_lc_reading_off"></td>
+                </tr>
+                <tr>
+                    <td>Floor</td>
+                    <td><input type="text" class="form-control field_lr_floor_stretch_time_on" ng-model="job.field_lr_floor_stretch_time_on"></td>
+                    <td><input type="text" class="form-control field_lr_floor_stretch_time_off" ng-model="job.field_lr_floor_stretch_time_off"></td>
+                    <td><input type="text" class="form-control field_lr_floor_temp_on" ng-model="job.field_lr_floor_temp_on"></td>
+                    <td><input type="text" class="form-control field_lr_floor_temp_off" ng-model="job.field_lr_floor_temp_off"></td>
+                    <td><input type="text" class="form-control field_lr_floor_final_time_on" ng-model="job.field_lr_floor_final_time_on"></td>
+                    <td><input type="text" class="form-control field_lr_floor_final_time_off" ng-model="job.field_lr_floor_final_time_off"></td>
+                    <td><input type="text" class="form-control field_lr_floor_reading_on" ng-model="job.field_lr_floor_reading_on"></td>
+                    <td><input type="text" class="form-control field_lr_floor_reading_off" ng-model="job.field_lr_floor_reading_off"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="relief-valve-blow-off">
+                <div class ="header">
+                    <label>Relief Valve Blow Off</label>
+                </div>
+                <div class="form-item field-liferaft-oem-certificateno" >
+                    <label class="control-label">Upper Chamber</label>
+                    <input type="text" class="form-date form-control" ng-model="job.field_lr_rv_blow_off_uc">
+                </div>
+                <div class="form-item field-liferaft-oem-certificateno" >
+                    <label class="control-label">Lower Chamber</label>
+                    <input type="text" class="form-date form-control" ng-model="job.field_lr_rv_blow_off_lc">
+                </div>
+            </div>
+            <div class="relief-valve-reset">
+                <div class ="header">
+                    <label>Relief Valve Reset</label>
+                </div>
+                <div class="form-item field-liferaft-oem-certificateno" >
+                    <label class="control-label">Upper Chamber</label>
+                    <input type="text" class="form-date form-control" ng-model="job.field_lr_rv_reset_uc">
+                </div>
+                <div class="form-item field-liferaft-oem-certificateno" >
+                    <label class="control-label">Lower Chamber</label>
+                    <input type="text" class="form-date form-control" ng-model="job.field_lr_rv_reset_lc">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default" id="panel-containers">
+        <div class="panel-heading">
+            <a data-toggle="collapse" href="#panel-body-containers"><div>CONTAINERS</div></a>
+        </div>
+        <div class="panel-collapse collapse" id="panel-body-containers">
+            <div class="form-item field-lr-f-r-p-container" >
+                <label class="control-label">F.R.P Container</label>
+                <select class="form-control field_lr_f_r_p_container" ng-model="job.field_lr_f_r_p_container" name="type" ng-dropdown>
+                    <option ng-option value="">- None -</option>
+                    <option ng-option value="Ok">Ok</option>
+                    <option ng-option value="Renewed">Renewed</option>
+                    <option ng-option value="Serviced">Serviced</option>
+                    <option ng-option value="select_or_other_frp">Other</option>
+                </select>
+                <div class="form-item field-lr-f-r-p-container-other" style="width: 100%;" ng-if="job.field_lr_f_r_p_container == 'select_or_other_frp'">
+                    <input class="text-box form-text form-control" size="60" type="text" ng-model="job.select_or_other_frp" />
+                </div>
+            </div>
+
+            <div class="form-item field-lr-container-sealing-strip" >
+                <label class="control-label">Sealing Strip</label>
+                <select class="form-control field_lr_container_sealing_strip" ng-model="job.field_lr_container_sealing_strip" name="type" ng-dropdown>
+                    <option ng-option value="">- None -</option>
+                    <option ng-option value="Ok">Ok</option>
+                    <option ng-option value="Renewed">Renewed</option>
+                    <option ng-option value="Serviced">Serviced</option>
+                    <option ng-option value="select_or_other_lr">Other</option>
+                </select>
+                <div class="form-item field-lr-container-sealing-strip" style="width: 100%;" ng-if="job.field_lr_container_sealing_strip == 'select_or_other_lr'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr" />
+                </div>
+            </div>
+
+            <div class="form-item field-lr-container-seal-gasket" >
+                <label class="control-label">Sealing Gasket</label>
+                <select class="form-control" ng-model="job.field_lr_container_seal_gasket" name="type" ng-dropdown>
+                    <option ng-option value="">- None -</option>
+                    <option ng-option value="Ok">Ok</option>
+                    <option ng-option value="Renewed">Renewed</option>
+                    <option ng-option value="Serviced">Serviced</option>
+                    <option ng-option value="select_or_other_sealing">Other</option>
+                </select>
+                <div class="form-item field-lr-container-seal-gasket" style="width: 100%;" ng-if="job.field_lr_container_seal_gasket == 'select_or_other_sealing'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_sealing" />
+                </div>
+            </div>
+
+            <div class="form-item field-lr-container-breaking-band" >
+                <label class="control-label">Breaking Bands</label>
+                <select class="form-control" ng-model="job.field_lr_container_breaking_band" name="type" ng-dropdown>
+                    <option ng-option value="">- None -</option>
+                    <option ng-option value="Ok">Ok</option>
+                    <option ng-option value="Renewed">Renewed</option>
+                    <option ng-option value="Serviced">Serviced</option>
+                    <option ng-option value="select_or_other_breaking_band">Other</option>
+                </select>
+                <div class="form-item field-lr-container-breaking-band-other" style="width: 100%;" ng-if="job.field_lr_container_breaking_band == 'select_or_other_breaking_band'">
+                    <input class="text-box form-text form-control" size="60" type="text" ng-model="job.select_or_other_breaking_band" />
+                </div>
+            </div>
+
+
+
+            <div class="form-item field-lr-container-marking-label" >
+                <label class="control-label">Marking Labels</label>
+                <select class="form-control" ng-model="job.field_lr_container_marking_label">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_marking">Other</option>
+                </select>
+                <div class="form-item field-lr-container-marking-label-other" style="width: 100%;" ng-if="job.field_lr_container_marking_label == 'select_or_other_marking'">
+                    <input class="text-box form-text form-control" size="60" type="text" ng-model="job.select_or_other_marking" />
+                </div>
+            </div>
+
+            <div class="form-item field-lr-container-container-id" >
+                <label class="control-label">Container ID</label>
+                <select class="form-control" ng-model="job.field_lr_container_container_id">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_container_id">Other</option>
+                </select>
+                <div class="form-item field-lr-container-container-id-other" style="width: 100%;" ng-if="job.field_lr_container_container_id == 'select_or_other_container_id'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_container_id" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default" id="panel-inflation-equipment">
+        <div class="panel-heading">
+            <a data-toggle="collapse" href="#panel-body-inflation-equipment"><div>INFLATION/DEFLATION ITEMS</div></a>
+        </div>
+        <div class="panel-collapse collapse" id="panel-body-inflation-equipment">
+            <div class="form-item field-lr-ie-operating-head" >
+                <label class="control-label">Operating Head</label>
+                <select class="form-control" ng-model="job.field_lr_ie_operating_head">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_operating_head">Other</option>
+                </select>
+                <div class="form-item field-lr-ie-operating-head-other" style="width: 100%;" ng-if="job.field_lr_ie_operating_head == 'select_or_other_operating_head'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_operating_head" />
+                </div>
+            </div>
+
+            <div class="form-item field-lr-ie-high-pressure-hose" >
+                <label class="control-label">High Pressure Hose</label>
+                <select class="form-control" ng-model="job.field_lr_ie_high_pressure_hose">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_high_pressure">Other</option>
+                </select>
+                <div class="form-item field-lr-ie-high-pressure-hose-other" style="width: 100%;" ng-if="job.field_lr_ie_high_pressure_hose == 'select_or_other_high_pressure'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_high_pressure" />
+                </div>
+            </div>
+
+            <div class="form-item field-lr-ie-t-y-connectors" >
+                <label class="control-label">T/Y Connectors</label>
+                <select class="form-control" ng-model="job.field_lr_ie_t_y_connectors">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_t_y_connectors">Other</option>
+                </select>
+                <div class="form-item field-lr-ie-t-y-connectors-other" style="width: 100%;" ng-if="job.field_lr_ie_t_y_connectors == 'select_or_other_t_y_connectors'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_t_y_connectors" />
+                </div>
+            </div>
+
+            <div class="form-item field-lr-ie-infl-defl-valves" >
+                <label class="control-label">Infl/Defl Valves</label>
+                <select class="form-control" ng-model="job.field_lr_ie_infl_defl_valves">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_infl_defl_valves">Other</option>
+                </select>
+                <div class="form-item field-lr-ie-infl-defl-valves-other" style="width: 100%;" ng-if="job.field_lr_ie_infl_defl_valves == 'select_or_other_infl_defl_valves'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_infl_defl_valves" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_ie_rubberized_bellow" >
+                <label class="control-label">Rubberized Bellow</label>
+                <select class="form-control" ng-model="job.field_lr_ie_rubberized_bellow">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_rubberized_bellow">Other</option>
+                </select>
+                <div class="form-item field_lr_ie_rubberized_bellow_other" style="width: 100%;" ng-if="job.field_lr_ie_rubberized_bellow == 'select_or_other_rubberized_bellow'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_rubberized_bellow" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_ie_painter_cord" >
+                <label class="control-label">Painter Cord</label>
+                <select class="form-control" ng-model="job.field_lr_ie_painter_cord">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_painter_cord">Other</option>
+                </select>
+                <div class="form-item field_lr_ie_painter_cord_other" style="width: 100%;" ng-if="job.field_lr_ie_painter_cord == 'select_or_other_painter_cord'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_painter_cord" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_ie_relief_valves" >
+                <label class="control-label">Relief Valves</label>
+                <select class="form-control" ng-model="job.field_lr_ie_relief_valves">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_relief_valves">Other</option>
+                </select>
+                <div class="form-item field_lr_ie_relief_valves_other" style="width: 100%;" ng-if="job.field_lr_ie_relief_valves == 'select_or_other_relief_valves'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_relief_valves" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_lc_infl_defl_valve" >
+                <label class="control-label">Lower Chamber Infl/Defl Valve</label>
+                <select class="form-control" ng-model="job.field_lr_lc_infl_defl_valve">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_infl_defl_valve">Other</option>
+                </select>
+                <div class="form-item field_lr_lc_infl_defl_valve_other" style="width: 100%;" ng-if="job.field_lr_lc_infl_defl_valve == 'select_or_other_infl_defl_valve'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_infl_defl_valve" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_lc_relief_valve" >
+                <label class="control-label">Lower Chamber Relief Valve</label>
+                <select class="form-control" ng-model="job.field_lr_lc_relief_valve">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_lc_relief">Other</option>
+                </select>
+                <div class="form-item field_lr_lc_relief_valve_other" style="width: 100%;" ng-if="job.field_lr_lc_relief_valve == 'select_or_other_lr_lc_relief'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_lc_relief" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_uc_infl_defl_valve" >
+                <label class="control-label">Upper Chamber Infl/Defl Valve</label>
+                <select class="form-control" ng-model="job.field_lr_uc_infl_defl_valve">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_uc_infl_defl_valve_other">Other</option>
+                </select>
+                <div class="form-item field_lr_uc_infl_defl_valve_other" style="width: 100%;" ng-if="job.field_lr_uc_infl_defl_valve == 'select_or_other_lr_uc_infl_defl_valve_other'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_uc_infl_defl_valve_other" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_uc_relief_valve" >
+                <label class="control-label">Upper Chamber Relief Valve</label>
+                <select class="form-control" ng-model="job.field_lr_uc_relief_valve">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_uc_relief_valve">Other</option>
+                </select>
+                <div class="form-item field_lr_uc_relief_valve_other" style="width: 100%;" ng-if="job.field_lr_uc_relief_valve == 'select_or_other_lr_uc_relief_valve'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_uc_relief_valve" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="panel panel-default" id="panel-life-raft">
+        <div class="panel-heading">
+            <a data-toggle="collapse" href="#panel-body-life-raft"><div>LIFE RAFT</div></a>
+        </div>
+        <div class="panel-collapse collapse" id="panel-body-life-raft">
+            <div class="form-item field_lr_lower_chamber" >
+                <label class="control-label">Lower Chamber</label>
+                <select class="form-control" ng-model="job.field_lr_lower_chamber">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_lower_chamber">Other</option>
+                </select>
+                <div class="form-item field_lr_lower_chamber_other" style="width: 100%;" ng-if="job.field_lr_lower_chamber == 'select_or_other_lr_lower_chamber'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_lower_chamber" />
+                </div>
+            </div>
+
+
+
+            <div class="form-item field_lr_upper_chamber" >
+                <label class="control-label">Upper Chamber</label>
+                <select class="form-control" ng-model="job.field_lr_upper_chamber">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_upper_chamber">Other</option>
+                </select>
+                <div class="form-item field_lr_lower_chamber_other" style="width: 100%;" ng-if="job.field_lr_upper_chamber == 'select_or_other_lr_upper_chamber'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_upper_chamber" />
+                </div>
+            </div>
+
+
+
+            <div class="form-item field_lr_floor_reeds_seams" >
+                <label class="control-label">Floor Reeds/Seams</label>
+                <select class="form-control" ng-model="job.field_lr_floor_reeds_seams">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_floor_reeds_seams">Other</option>
+                </select>
+                <div class="form-item field_lr_floor_reeds_seams_other" style="width: 100%;" ng-if="job.field_lr_floor_reeds_seams == 'select_or_other_lr_floor_reeds_seams'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_floor_reeds_seams" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_strut_arches_seams" >
+                <label class="control-label">Strut/Arches/Seams</label>
+                <select class="form-control" ng-model="job.field_lr_strut_arches_seams">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_strut_arches_seams">Other</option>
+                </select>
+                <div class="form-item field_lr_strut_arches_seams_other" style="width: 100%;" ng-if="job.field_lr_strut_arches_seams == 'select_or_other_lr_strut_arches_seams'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_strut_arches_seams" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_boarding_ramp" >
+                <label class="control-label">Boarding Ramp</label>
+                <select class="form-control" ng-model="job.field_lr_boarding_ramp">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_boarding_ramp">Other</option>
+                </select>
+                <div class="form-item field_lr_boarding_ramp_other" style="width: 100%;" ng-if="job.field_lr_boarding_ramp == 'select_or_other_lr_boarding_ramp'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_boarding_ramp" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_boarding_ladder" >
+                <label class="control-label">Boarding Ladder</label>
+                <select class="form-control" ng-model="job.field_lr_boarding_ladder">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_boarding_ladder">Other</option>
+                </select>
+                <div class="form-item field_lr_boarding_ladder_other" style="width: 100%;" ng-if="job.field_lr_boarding_ladder == 'select_or_other_lr_boarding_ladder'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_boarding_ladder" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_outer_light" >
+                <label class="control-label">Outer Light</label>
+                <select class="form-control" ng-model="job.field_lr_outer_light">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_outer_light">Other</option>
+                </select>
+                <div class="form-item field_lr_outer_light_other" style="width: 100%;" ng-if="job.field_lr_outer_light == 'select_or_other_lr_outer_light'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_outer_light" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_liferafts_fabrics" >
+                <label class="control-label">Liferafts Fabrics</label>
+                <select class="form-control" ng-model="job.field_lr_liferafts_fabrics">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_liferafts_fabrics">Other</option>
+                </select>
+                <div class="form-item field_lr_liferafts_fabrics_other" style="width: 100%;" ng-if="job.field_lr_liferafts_fabrics == 'select_or_other_lr_liferafts_fabrics'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_liferafts_fabrics" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_inner_canopy" >
+                <label class="control-label">Inner Canopy</label>
+                <select class="form-control" ng-model="job.field_lr_inner_canopy">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_inner_canopy">Other</option>
+                </select>
+                <div class="form-item field_lr_inner_canopy_other" style="width: 100%;" ng-if="job.field_lr_inner_canopy == 'select_or_other_lr_inner_canopy'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_inner_canopy" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_outer_canopy" >
+                <label class="control-label">Outer Canopy</label>
+                <select class="form-control" ng-model="job.field_lr_outer_canopy">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_outer_canopy">Other</option>
+                </select>
+                <div class="form-item field_lr_outer_canopy_other" style="width: 100%;" ng-if="job.field_lr_outer_canopy == 'select_or_other_lr_outer_canopy'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_outer_canopy" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_lifelines" >
+                <label class="control-label">LifeLines</label>
+                <select class="form-control" ng-model="job.field_lr_lifelines">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_lifelines">Other</option>
+                </select>
+                <div class="form-item field_lr_lifelines_other" style="width: 100%;" ng-if="job.field_lr_lifelines == 'select_or_other_lr_lifelines'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_lifelines" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_water_pockets" >
+                <label class="control-label">Water Pockets</label>
+                <select class="form-control" ng-model="job.field_lr_water_pockets">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_water_pockets">Other</option>
+                </select>
+                <div class="form-item field_lr_water_pockets_other" style="width: 100%;" ng-if="job.field_lr_water_pockets == 'select_or_other_lr_water_pockets'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_water_pockets" />
+                </div>
+            </div>
+            <div class="form-item field_lr_zips_draw_cords" >
+                <label class="control-label">Zips / Draw Cords</label>
+                <select class="form-control" ng-model="job.field_lr_zips_draw_cords">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_zips_draw_cords">Other</option>
+                </select>
+                <div class="form-item field_lr_zips_draw_cords_other" style="width: 100%;" ng-if="job.field_lr_zips_draw_cords == 'select_or_other_lr_zips_draw_cords'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_zips_draw_cords" />
+                </div>
+            </div>
+            <div class="form-item field_lr_sp_r_reflective_tape" >
+                <label class="control-label">R.Reflective Tape</label>
+                <select class="form-control" ng-model="job.field_lr_sp_r_reflective_tape">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_r_reflective_tape">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_r_reflective_tape_other" style="width: 100%;" ng-if="job.field_lr_sp_r_reflective_tape == 'select_or_other_lr_sp_r_reflective_tape'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_r_reflective_tape" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="panel panel-default" id="panel-survival-pack">
+        <div class="panel-heading">
+            <a data-toggle="collapse" href="#panel-body-survival-pack"><div>SURVIVAL PACK</div></a>
+        </div>
+        <div class="panel-collapse collapse" id="panel-body-survival-pack">
+            <div class="form-item field_lr_sp_valise" >
+                <label class="control-label">Valise</label>
+                <select class="form-control" ng-model="job.field_lr_sp_valise">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_valise">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_valise_other" style="width: 100%;" ng-if="job.field_lr_sp_valise == 'select_or_other_lr_sp_valise'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_valise" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_repair_kit" >
+                <label class="control-label">Repair Kit</label>
+                <select class="form-control" ng-model="job.field_lr_sp_repair_kit">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_repair_kit">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_repair_kit_other" style="width: 100%;" ng-if="job.field_lr_sp_repair_kit == 'select_or_other_lr_sp_repair_kit'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_repair_kit" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_sea_anchor" >
+                <label class="control-label">Sea Anchor</label>
+                <select class="form-control" ng-model="job.field_lr_sp_sea_anchor">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_sea_anchor">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_sea_anchor_other" style="width: 100%;" ng-if="job.field_lr_sp_sea_anchor == 'select_or_other_lr_sp_sea_anchor'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_sea_anchor" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_survival_book" >
+                <label class="control-label">Survival Book</label>
+                <select class="form-control" ng-model="job.field_lr_sp_survival_book">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_survival_book">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_survival_book_other" style="width: 100%;" ng-if="job.field_lr_sp_survival_book == 'select_or_other_lr_sp_survival_book'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_survival_book" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_paddles" >
+                <label class="control-label">Paddles</label>
+                <select class="form-control" ng-model="job.field_lr_sp_paddles">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_paddles">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_paddles" style="width: 100%;" ng-if="job.field_lr_sp_paddles == 'select_or_other_lr_sp_paddles'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_paddles" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_signaling_torch" >
+                <label class="control-label">Signaling Torch</label>
+                <select class="form-control" ng-model="job.field_lr_sp_signaling_torch">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_signaling_torch">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_signaling_torch_other" style="width: 100%;" ng-if="job.field_lr_sp_signaling_torch == 'select_or_other_lr_sp_signaling_torch'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_signaling_torch" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_torch_cells" >
+                <label class="control-label">Torch Cells</label>
+                <select class="form-control" ng-model="job.field_lr_sp_torch_cells">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_torch_cells">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_torch_cells_other" style="width: 100%;" ng-if="job.field_lr_sp_torch_cells == 'select_or_other_lr_sp_torch_cells'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_torch_cells" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_spare_bulb" >
+                <label class="control-label">Spare Bulb</label>
+                <select class="form-control" ng-model="job.field_lr_sp_spare_bulb">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_spare_bulb">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_spare_bulb_other" style="width: 100%;" ng-if="job.field_lr_sp_spare_bulb == 'select_or_other_lr_sp_spare_bulb'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_spare_bulb" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_sponges" >
+                <label class="control-label">Sponges</label>
+                <select class="form-control" ng-model="job.field_lr_sp_sponges">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_sponges">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_sponges_other" style="width: 100%;" ng-if="job.field_lr_sp_sponges == 'select_or_other_lr_sp_sponges'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_sponges" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_bailers" >
+                <label class="control-label">Bailers</label>
+                <select class="form-control" ng-model="job.field_lr_sp_bailers">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_bailers">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_bailers_other" style="width: 100%;" ng-if="job.field_lr_sp_bailers == 'select_or_other_lr_sp_bailers'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_bailers" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_inner_light" >
+                <label class="control-label">Inner Light</label>
+                <select class="form-control" ng-model="job.field_lr_sp_inner_light">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_inner_light">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_inner_light_other" style="width: 100%;" ng-if="job.field_lr_sp_inner_light == 'select_or_other_lr_sp_inner_light'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_inner_light" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_t_p_a_" >
+                <label class="control-label">T.P.A.</label>
+                <select class="form-control" ng-model="job.field_lr_sp_t_p_a_">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_t_p_a_">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_t_p_a__other" style="width: 100%;" ng-if="job.field_lr_sp_t_p_a_ == 'select_or_other_lr_sp_t_p_a_'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_t_p_a_" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_radar_reflector" >
+                <label class="control-label">Radar Reflector</label>
+                <select class="form-control" ng-model="job.field_lr_sp_radar_reflector">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_radar_reflector">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_radar_reflector_other" style="width: 100%;" ng-if="job.field_lr_sp_radar_reflector == 'select_or_other_lr_sp_radar_reflector'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_radar_reflector" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_heliograph" >
+                <label class="control-label">Heliograph</label>
+                <select class="form-control" ng-model="job.field_lr_sp_heliograph">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_heliograph">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_heliograph_other" style="width: 100%;" ng-if="job.field_lr_sp_heliograph == 'select_or_other_lr_sp_heliograph'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_heliograph" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_fishing_kit" >
+                <label class="control-label">Fishing Kit</label>
+                <select class="form-control" ng-model="job.field_lr_sp_fishing_kit">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_fishing_kit">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_fishing_kit_other" style="width: 100%;" ng-if="job.field_lr_sp_fishing_kit == 'select_or_other_lr_sp_fishing_kit'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_fishing_kit" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_whistle" >
+                <label class="control-label">Whistle</label>
+                <select class="form-control" ng-model="job.field_lr_sp_whistle">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_whistle">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_whistle_other" style="width: 100%;" ng-if="job.field_lr_sp_whistle == 'select_or_other_lr_sp_whistle'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_whistle" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_sickness_bags" >
+                <label class="control-label">Sickness Bags</label>
+                <select class="form-control" ng-model="job.field_lr_sp_sickness_bags">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_sickness_bags">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_sickness_bags_other" style="width: 100%;" ng-if="job.field_lr_sp_sickness_bags == 'select_or_other_lr_sp_sickness_bags'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_sickness_bags" />
+                </div>
+            </div>
+            <div class="form-item field_lr_sp_floating_knife" >
+                <label class="control-label">Floating Knife</label>
+                <select class="form-control" ng-model="job.field_lr_sp_floating_knife">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_floating_knife">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_floating_knife_other" style="width: 100%;" ng-if="job.field_lr_sp_floating_knife == 'select_or_other_lr_sp_floating_knife'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_floating_knife" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_quoits_rescue_line" >
+                <label class="control-label">Quoits Rescue Line</label>
+                <select class="form-control" ng-model="job.field_lr_sp_quoits_rescue_line">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_quoits_rescue_line">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_quoits_rescue_line_other" style="width: 100%;" ng-if="job.field_lr_sp_quoits_rescue_line == 'select_or_other_lr_sp_quoits_rescue_line'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_quoits_rescue_line" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_tin_openers" >
+                <label class="control-label">Tin Openers</label>
+                <select class="form-control" ng-model="job.field_lr_sp_tin_openers">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_tin_openers">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_tin_openers_other" style="width: 100%;" ng-if="job.field_lr_sp_tin_openers == 'select_or_other_lr_sp_tin_openers'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_tin_openers" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_leak_stoppers" >
+                <label class="control-label">Leak Stoppers</label>
+                <select class="form-control" ng-model="job.field_lr_sp_leak_stoppers">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_leak_stoppers">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_leak_stoppers_other" style="width: 100%;" ng-if="job.field_lr_sp_leak_stoppers == 'select_or_other_lr_sp_leak_stoppers'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_leak_stoppers" />
+                </div>
+            </div>
+
+
+
+            <div class="form-item field_lr_sp_polythene_liner" >
+                <label class="control-label">Polythene Liner</label>
+                <select class="form-control" ng-model="job.field_lr_sp_polythene_liner">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_polythene_liner">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_polythene_liner_other" style="width: 100%;" ng-if="job.field_lr_sp_polythene_liner == 'select_or_other_lr_sp_polythene_liner'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_polythene_liner" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_adhesive_tube" >
+                <label class="control-label">Adhesive Tube</label>
+                <select class="form-control" ng-model="job.field_lr_sp_adhesive_tube">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_adhesive_tube">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_adhesive_tube_other" style="width: 100%;" ng-if="job.field_lr_sp_adhesive_tube == 'select_or_other_lr_sp_adhesive_tube'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_adhesive_tube" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_bellow" >
+                <label class="control-label">Bellow</label>
+                <select class="form-control" ng-model="job.field_lr_sp_bellow">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_bellow">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_bellow_other" style="width: 100%;" ng-if="job.field_lr_sp_bellow == 'select_or_other_lr_sp_bellow'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_bellow" />
+                </div>
+            </div>
+
+            <div class="form-item field_lr_sp_drinking_vessel" >
+                <label class="control-label">Drinking Vessel</label>
+                <select class="form-control" ng-model="job.field_lr_drinking_vessel">
+                    <option value="">- None -</option>
+                    <option value="Ok">Ok</option>
+                    <option value="Renewed">Renewed</option>
+                    <option value="Serviced">Serviced</option>
+                    <option value="select_or_other_lr_sp_drinking_vessel">Other</option>
+                </select>
+                <div class="form-item field_lr_sp_drinking_vessel_other" style="width: 100%;" ng-if="job.field_lr_sp_drinking_vessel == 'select_or_other_lr_sp_drinking_vessel'">
+                    <input class="text-box form-text form-control" size="60" type="text"  ng-model="job.select_or_other_lr_sp_drinking_vessel" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default" id="panel-lifed-equipments">
+        <div class="panel-heading">
+            <a data-toggle="collapse" href="#panel-body-lifed-equipments"><div>LIFED ITEMS</div></a>
+        </div>
+        <div class="panel-collapse collapse" id="panel-body-lifed-equipments">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <td>SN</td>
+                    <td>LIFED ITEMS</td>
+                    <td>Quantity</td>
+                    <td>Manufacturer</td>
+                    <td>Lot No</td>
+                    <td>Expiry Date</td>
+                    <td>Replaced Quantity</td>
+                    <td>Replaced Manufacturer</td>
+                    <td>Replaced Lot No</td>
+                    <td>Replaced Expiry Date</td>
+                    <td></td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="lifed_eq in job.lifed_equipments | byDeleteFlag:true" class="animate-repeat">
+                    <td>[[$index + 1]]</td>
+                    <td><select class="form-control" name ="item" ng-model="lifed_eq.field_liferaft_lifed_items">
+                            <option value="_none">- None -</option>
+                            <option value="Water">Water</option>
+                            <option value="Ration">Ration</option>
+                            <option value="Hand Flare">Hand Flare</option>
+                            <option value="Parachute Rockets">Parachute Rockets</option>
+                            <option value="Smoke Floats">Smoke Floats</option>
+                            <option value="First Aid Kit">First Aid Kit</option>
+                            <option value="ASS Tablets">ASS Tablets</option>
+                            <option value="Lithium Cell">Lithium Cell</option>
+                        </select>
+                    </td>
+                    <td><input type="text" class="form-control" name="qty" ng-model="lifed_eq.field_liferaft_quantity"></td>
+                    <td><input type="text" class="form-control" name="manuf" ng-model="lifed_eq.field_lr_manufacturer"></td>
+                    <td><input type="text" class="form-control" name="lot-no" ng-model="lifed_eq.field_liferaft_lot_no"></td>
+                    <td><input type="date" class="form-control" name="expiry" ng-model="lifed_eq.field_liferaft_expiry"></td>
+                    <td><input type="text" class="form-control" name="replaced-qty" ng-model="lifed_eq.field_liferaft_replaced_quantity"></td>
+                    <td><input type="text" class="form-control" name="replaced-manuf" ng-model="lifed_eq.field_lr_replaced_manufacturer"></td>
+                    <td><input type="text" class="form-control" name="replaced-lot-no" ng-model="lifed_eq.field_liferaft_replaced_lot_no"></td>
+                    <td><input type="date" class="form-control" name="replaced-expiry" ng-model="lifed_eq.field_liferaft_replaced_expiry"></td>
+                    <td> <button class="btn-danger" ng-click="removeLifedEquip(lifed_eq)">Delete</button></td>
+                </tr>
+
+                </tbody>
+                <tfoot>
+                <tr><td ><button class="btn-primary" ng-click="addLifedEquip()">Add</button></tr>
+                </tfoot>
+
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default" id="panel-other">
+        <div class="panel-heading">
+            <a data-toggle="collapse" href="#panel-body-other"><div>Other</div></a>
+        </div>
+        <div class="panel-collapse collapse" id="panel-body-other">
+            <div class="form-item hru-maker">
+                <label class="control-label">HRU Manufacturer</label>
+                <input type="text" class="form-control" ng-model="job.field_lr_hru_maker">
+            </div>
+
+
+
+            <div class="form-item hru-sn">
+                <label class="control-label">HRU Serial Number</label>
+                <input type="text" class="form-control" ng-model="job.field_lr_hru_sn">
+            </div>
+
+            <div class="form-item field-service-engineer">
+                <label class="control-label">Service Engineer</label>
+                <input type="text" class="form-control" auto-complete="getMatchedServiceEngineer" ng-model="job.field_service_engineer.name">
+            </div>
+
+            <div class="form-item hru-expiry">
+                <label class="control-label">HRU Expiry Date</label>
+                <input type="date" class="date-control form-control" ng-model="job.field_lr_hru_expiry">
+            </div>
+            <div class="form-item tests">
+                <div class="wp-test">
+                    <div class="select">
+                        <label>WP Test</label>
+                        <div ng-init="job.field_lr_wp_test='0'">
+                        <input type="radio" name="wp-test" ng-model="job.field_lr_wp_test" value="1"> Yes
+                        <input type="radio" name="wp-test" ng-model="job.field_lr_wp_test" value="0"> No
+                    </div>
+                    </div>
+                    <div class="form-subitem wp-test-latest-date">
+                        <label class="control-label">Latest Date</label>
+                        <input type="date" class="date-control form-control" ng-disabled="job.field_lr_wp_test!='1'" ng-model="job.field_lr_wp_latest_date">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-item tests">
+                <div class="nap-test">
+                    <div class="select">
+                        <label>NAP Test</label>
+                        <div ng-init="job.field_lr_nap_test='0'">
+                        <input type="radio" name="nap-test" ng-model="job.field_lr_nap_test" value="1"> Yes
+                        <input type="radio" name="nap-test" ng-model="job.field_lr_nap_test" value="0"> No
+                        </div>
+                    </div>
+                    <div class="form-subitem nap-test-latest-date">
+                        <label class="control-label">Latest Date</label>
+                        <input type="date" class="date-control form-control" ng-disabled="job.field_lr_nap_test!='1'" ng-model="job.field_lr_nap_latest_date">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-item tests">
+                <div class="fs-test">
+                    <div class="select">
+                        <label>FS Test</label>
+                        <div ng-init="job.field_lr_fs_test='0'">
+                        <input type="radio" name="fs-test" ng-model="job.field_lr_fs_test" value="1"> Yes
+                        <input type="radio" name="fs-test" ng-model="job.field_lr_fs_test" value="0"> No
+                        </div>
+                    </div>
+                    <div class="form-subitem fs-test-latest-date">
+                        <label class="control-label">Latest Date</label>
+                        <input type="date" class="date-control form-control" ng-disabled="job.field_lr_fs_test!='1'" ng-model="job.field_lr_fs_latest_date">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-item tests">
+                <div class="gas-inflation-test">
+                    <div class="select">
+                        <label>Gas Inflation Test</label>
+                        <div ng-init="job.field_lr_gas_inflation_test='0'">
+                        <input type="radio" name="gas-inflation-test" ng-model="job.field_lr_gas_inflation_test" value="1"> Yes
+                        <input type="radio" name="gas-inflation-test" ng-model="job.field_lr_gas_inflation_test" value="0"> No
+                        </div>
+                    </div>
+                    <div class="form-subitem gas-inflation-test-latest-date">
+                        <label class="control-label">Latest Date</label>
+                        <input type="date" class="date-control form-control" ng-disabled="job.field_lr_gas_inflation_test!='1'" ng-model="job.field_lr_git_latest_date">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-item tests">
+                <div class="load-test">
+                    <div class="select">
+                        <label>Load Test</label>
+                        <div ng-init="job.field_lr_load_test='0'">
+                        <input type="radio" name="load-test" ng-model="job.field_lr_load_test" value="1"> Yes
+                        <input type="radio" name="load-test" ng-model="job.field_lr_load_test" value="0"> No
+                        </div>
+                    </div>
+                    <div class="form-subitem load-test-latest-date">
+                        <label class="control-label">Latest Date</label>
+                        <input type="date" class="date-control form-control" ng-disabled="job.field_lr_load_test!='1'" ng-model="job.field_lr_lt_latest_date">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-item weight">
+                <label class="control-label">Weight (Kgs)</label>
+                <input type="text" class="form-control" ng-model="job.field_lr_weight">
+            </div>
+
+            <div class="form-item painter-line">
+                <label class="control-label">Painter Line Length [M]</label>
+                <input type="text" class="form-control" ng-model="job.field_lr_painter_line_length_m_">
+            </div>
+
+            <div class="form-item stowage-height">
+                <label class="control-label">Stowage Height [M]</label>
+                <input type="text" class="form-control" ng-model="job.field_lr_stowage_height_m_">
+            </div>
+
+            <div class="form-item class-inspection">
+                <label>Class Inspection</label>
+                <div ng-init="job.field_lr_class_inspection='0'">
+                    <input type="radio" name="class-inspection" ng-model="job.field_lr_class_inspection" value="1" ng-disabled="job.field_liferaft_certificate_type!='Non OEM'"> Yes
+                    <input type="radio" name="class-inspection" ng-model="job.field_lr_class_inspection" value="0" ng-disabled="job.field_liferaft_certificate_type!='Non OEM'"> No
+                </div>
+            </div>
+
+            <div class="form-item mmd-inspection">
+                <label>MMD Inspection</label>
+                <div ng-init="job.field_lr_mmd_inspection='0'">
+                    <input type="radio" name="mmd-inspection" ng-model="job.field_lr_mmd_inspection" value="1" ng-disabled="job.field_liferaft_certificate_type!='Non OEM'"> Yes
+                    <input type="radio" name="mmd-inspection" ng-model="job.field_lr_mmd_inspection" value="0" ng-disabled="job.field_liferaft_certificate_type!='Non OEM'"> No
+                </div>
+            </div>
+
+            <div class="form-item field_reinspection_comments">
+                <label class="control-label">Comments</label>
+                <div>
+                    <input class="form-control" type="text" name="mmd-comments" ng-model="job.field_reinspection_comments">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="panel panel-default" id="panel-revenue-details">
+        <div class="panel-heading">
+            <a data-toggle="collapse" href="#panel-body-revenue-details"><div>Revenue Details</div></a>
+        </div>
+        <div class="panel-collapse collapse" id="panel-body-revenue-details">
+            <div class="form-item invoice-no">
+                <label class="control-label">Invoice No</label>
+                <input type="text" class="form-control" ng-model="job.invoice.field_lr_invoice_no">
+            </div>
+            <div class="form-item field-invoice-date" >
+                <label class="control-label">Invoice Date</label>
+                <input type="date" class="form-date form-control" ng-model="job.invoice.field_invoice_date">
+            </div>
+            <div class="form-item field-oem-cert-charges" >
+                <label class="control-label">OEM Certification Charges</label>
+                <input type="text" class="form-date form-control" ng-disabled="job.field_liferaft_certificate_type!='OEM'" ng-model="job.invoice.field_oem_certification_charges">
+            </div>
+
+            <div class="form-item field-liferaft-oem-certificateno" >
+                <label class="control-label">OEM Certificate No</label>
+                <input type="text" class="form-date form-control" ng-disabled="job.field_liferaft_certificate_type!='OEM'" ng-model="job.invoice.field_lr_oem_certificate_no">
+            </div>
+
+            <div class="form-item field-class-cert-charges" >
+                <label class="control-label">Class Certification Charges</label>
+                <input type="text" class="form-date form-control" ng-model="job.invoice.field_lr_in_certification_charge">
+            </div>
+
+            <div class="form-item field-replacement-charges" >
+                <label class="control-label">Replacement Charges</label>
+                <input type="text" class="form-date form-control" ng-model="job.invoice.field_lr_inv_replacement_charges">
+            </div>
+
+            <div class="form-item field-service-charges" >
+                <label class="control-label">Service Charges</label>
+                <input type="text" class="form-date form-control" ng-model="job.invoice.field_lr_inv_service_charges">
+            </div>
+
+            <div class="form-item field-invoice-amount" >
+                <label class="control-label">Invoice Amount</label>
+                <input type="text" class="form-date form-control" ng-model="job.invoice.field_lr_inv_invoice_amount">
+            </div>
+        </div>
+    </div>
+
+    <button class="btn-primary form-submit" value="submit-new-job" type="submit" name="submit-new-job" ng-click="saveJob()" ng-show="job.moderation_state == 'approved'">Save</button>
+    <button class="btn-primary form-submit" value="submit-new-job" type="submit" name="submit-new-job" ng-click="draftJob()" ng-show="job.moderation_state == ''">Draft</button>
+    <button class="btn-primary form-submit" value="submit-new-job" type="submit" name="submit-new-job" ng-click="draftJob()" ng-show="job.moderation_state == 'draft' ">Draft</button>
+    <button class="btn-primary form-submit" value="submit-new-job" type="submit" name="submit-new-job" ng-click="rejectedJob()" ng-show="job.moderation_state == 'pending_approval'">Rejected</button>
+    <button class="btn-primary form-submit" value="submit-new-job" type="submit" name="submit-new-job" ng-click="approveJob()" ng-show="job.moderation_state == 'pending_approval'">Approve</button>
+    <button class="btn-primary form-submit" value="submit-new-job" type="submit" name="submit-new-job" ng-click="sendForAprrovalJob()" ng-show="job.moderation_state == 'draft' ">Send For Approval</button>
+    <button class="btn-primary form-submit" value="submit-new-job" type="submit" name="submit-new-job" ng-click="sendForAprrovalJob()" ng-show="job.moderation_state == ''">Send For Approval</button>
+  </form>
+        <div class="hidden">
+            <script type="text/ng-template" id="new-liferaft-dialog">
+                <form name = 'newLiferaftJob' id="newLiferaft" class="new-liferaft-job-njs" >
+                    <div class="panel panel-default" id="panel-liferaft-general-details">
+                        <div class="panel-heading">
+                            Liferaft General Details
+                        </div>
+                        <div class="panel-collapse collapse in " id="panel-body-liferaft-general-details">
+                            <div class="form-item liferaft-SN">
+                                <label class="control-label">Liferaft SN</label>
+                                <input type="text" class="form-text form-control" ng-model="newLiferaft.field_liferaft_serial_no">
+                            </div>
+                            <div class="form-item field-liferaft-vessel" >
+                                <label class="control-label">Vessel</label>
+                                <input type="text" class="form-date form-control" auto-complete="getMatchedVessel" ng-model="newLiferaft.vessel.title">
+                            </div>
+                            <div class="form-item date-of-manufacturing">
+                                <label class="control-label">Manufacturing Date</label>
+                                <input type="date" class="form-date form-control" ng-model="newLiferaft.field_liferaft_date_manufacturing">
+                            </div>
+                            <div class="form-item field-liferaft-operating-mechanism " >
+                                <label class="control-label">Operating Mechanism </label>
+                                <select class="form-select form-control" data-toggle="tooltip" ng-model="newLiferaft.field_operating_mechanism">
+                                    <option value="Throw Overboard Liferfat">Throw Overboard Liferfat</option>
+                                    <option value="Throw Overboard Self Righting Liferaft">Throw Overboard Self Righting Liferaft</option>
+                                    <option value="Davit Launched Liferaft">Davit Launched Liferaft</option>
+                                    <option value="Davit Launched Self Righting Liferaft">Davit Launched Self Righting Liferaft</option>
+                                </select>
+                            </div>
+                            <div class="form-item field-liferaft-manufacturer" >
+                                <label class="control-label">Manufacturer</label>
+                                <input type="text" class="form-date form-control" auto-complete="getMatchedLiferaftManufacturer" ng-model="newLiferaft.field_liferaft_manufacturer.title">
+                            </div>
+                            <div class="form-item field-liferaft-previous-inspec" >
+                                <label class="control-label">Last Surveyed On</label>
+                                <input type="date" class="form-date form-control" ng-model="newLiferaft.field_liferaft_previous_inspec">
+                            </div>
+                            <div class="form-item date-of-inspection">
+                                <label class="control-label">Surveyed On</label>
+                                <input type="date" class="form-date form-control" ng-model="newLiferaft.field_liferaft_date_inspection">
+                            </div>
+                            <div class="form-item field-liferaft-type" >
+                                <label class="control-label">Type</label>
+                                <input type="text" class="form-date form-control" ng-model="liferaftNew.field_liferaft_type.type" auto-complete="getMatchedLiferaftTypeAndCapacity">
+                            </div>
+                            <div class="form-item field-liferaft-survivalpack-type" >
+                                <label class="control-label">Survival Pack Type</label>
+                                <select class="form-select form-control" data-toggle="tooltip" ng-model="newLiferaft.field_liferaft_survivalpack_type">
+                                    <option value="_none">- None -</option>
+                                    <option value="A-Pack">A-Pack Solas</option>
+                                    <option value="B-Pack">B-Pack Solas</option>
+                                    <option value="Partial Pack">Partial Pack Solas</option>
+                                </select>
+                            </div>
+                            <div class="form-item field-liferaft-model" >
+                                <label class="control-label">Model</label>
+                                <input type="text" class="form-date form-control" ng-model="newLiferaft.field_liferaft_model">
+                            </div>
+
+
+                            <div class="form-item field-liferaft-submit-condemnation">
+                                <button class="btn-primary form-submit" value="submit-new-job" name="submit-new-job" ng-click="saveNewLiferaft()">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </script>
+        </div>
+    </div>
+
+</div>

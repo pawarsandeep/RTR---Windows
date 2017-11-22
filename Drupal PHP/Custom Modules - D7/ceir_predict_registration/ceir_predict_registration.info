@@ -1,0 +1,6 @@
+name = CEIR Predict Registration
+description = Provides functionality needed by CEIR predict registration.
+core = 7.x
+package = Ceir
+
+dependencies[] = commerce_registration

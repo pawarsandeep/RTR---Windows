@@ -1,0 +1,16 @@
+salesforce_lightning_menu:
+  version: 1.x
+  js:
+    lib/app.js: {}
+
+  css:
+    theme:
+      lib/AdminLTE.css: {}
+      lib/skin-blue.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupal.ajax
+    - core/drupal
+    - core/drupalSettings
+    - core/jquery.once
+    

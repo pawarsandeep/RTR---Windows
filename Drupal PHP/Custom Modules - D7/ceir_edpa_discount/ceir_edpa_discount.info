@@ -1,0 +1,6 @@
+name = CEIR EDPA Discount
+description = Dynamically adds discount conditions to the EDPA custom rule.
+core = 7.x
+package = Ceir
+
+dependencies[] = commerce_discount

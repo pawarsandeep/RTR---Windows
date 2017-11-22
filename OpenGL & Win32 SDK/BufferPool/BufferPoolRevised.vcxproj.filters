@@ -1,0 +1,199 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="OpenGLWindowcpp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="electric_circuit.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="vcredist.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="scenario1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="scenario2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="scenario3.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="scenario4.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="scenario5.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="scenarios_header.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="thebuffercache.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="thebufferheader.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="indices.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="3_locked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="3_Delayed.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="3_Free.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="4_Delayed.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="4_Free.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="4_Locked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="5_Delayed.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="5_Free.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="5_Locked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="10_Delayed.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="10_Free.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="10_Locked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="17_Delayed.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="17_Free.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="17_Locked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="18_Delayed.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="18_Free.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="18_Locked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="28_Delayed.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="28_Free.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="28_Locked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="35_Delayed.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="35_Free.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="35_Locked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="50_Delayed.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="50_Free.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="50_Locked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="64_Delayed.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="64_Free.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="64_Locked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="97_Delayed.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="97_Free.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="97_Locked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="98_Delayed.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="98_Free.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="98_Locked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="99_Delayed.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="99_Free.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="99_Locked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="blkno0.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="blkno1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="blkno2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="blkno3.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="freelistheader.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

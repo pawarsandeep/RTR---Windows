@@ -1,0 +1,24 @@
+common:
+  css:
+    theme:
+      css/style.css: {}
+      css/ngDialog.min.css: {}
+      css/ngDialog-theme-default.css: {}
+  js:
+    https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js: { type: external, minified: true }
+    https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.4/angular-sanitize.min.js: { type: external, minified: true }
+    js/angular-auto-complete.js: {}
+    js/shm_ajs.js: {}
+    js/ngDialog.min.js: {}
+
+liferaft_job:
+  js:
+    js/ajs_liferaft.js: {}
+  dependencies:
+    - shm_ajs/common
+
+condemnation_job:
+  js:
+    js/ajs_condemnation.js: {}
+  dependencies:
+    - shm_ajs/common

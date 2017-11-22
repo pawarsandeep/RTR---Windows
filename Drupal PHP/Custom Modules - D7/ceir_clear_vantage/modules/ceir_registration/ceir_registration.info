@@ -1,0 +1,6 @@
+name = CEIR Registration
+description = CEIR Registration module
+core = 7.x
+package = Ceir
+dependencies[] = commerce
+dependencies[] = commerce_checkout

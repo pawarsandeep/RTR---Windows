@@ -1,0 +1,6 @@
+name = CEIR Pricelist
+description = CEIR Pricelist
+core = 7.x
+package = Ceir
+dependencies[] = commerce
+dependencies[] = commerce_pricelist

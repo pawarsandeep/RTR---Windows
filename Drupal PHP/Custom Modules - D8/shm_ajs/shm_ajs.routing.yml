@@ -1,0 +1,50 @@
+liferaft_new_job:
+  path: '/liferaft/new-job'
+  defaults:
+    _controller: 'Drupal\shm_ajs\Controller\Liferaft::newJob'
+    _title: 'Liferaft Re-Inspection Certificate'
+  requirements:
+    _permission: 'submitliferaft_service_job service'
+    
+condemnation_new_job:
+  path: '/condemnation/new-job'
+  defaults:
+    _controller: 'Drupal\shm_ajs\Controller\Condemnation::newJob'
+    _title: 'Condemnation Certificate'
+  requirements:
+    _permission: 'submitcondemnation_report service'
+    
+condemnation_edit_job:
+  path: '/condemnation/{job_entity}/edit'
+  defaults:
+    _controller: 'Drupal\shm_ajs\Controller\Condemnation::editJob'
+    _title: 'Condemnation Certificate'
+  requirements:
+    _permission: 'edit owncondemnation_report service'
+    _custom_access: 'Drupal\shm_ajs\Access\CustomAccessCheck::access'
+
+liferaft_edit_job:
+  path: '/liferaft/{job_entity}/edit'
+  defaults:
+    _controller: 'Drupal\shm_ajs\Controller\Liferaft::editJob'
+    _title: 'Liferaft Certificate'
+  requirements:
+    _permission: 'edit ownliferaft_service_job service'
+    _custom_access: 'Drupal\shm_ajs\Access\CustomAccessCheck::access'
+    
+liferaft_delete_job:
+  path: '/liferaft/{job_entity}/delete'
+  defaults:
+    _form: '\Drupal\shm_ajs\Form\DeleteJobForm'
+    _title: 'Are you sure you want to delete the job submission ?'
+  requirements:
+      _access: 'TRUE'
+
+
+condemnation_delete_job:
+  path: '/condemnation/{job_entity}/delete'
+  defaults:
+    _form: '\Drupal\shm_ajs\Form\DeleteJobForm'
+    _title: 'Are you sure you want to delete the job submission ?'
+  requirements:
+      _access: 'TRUE'

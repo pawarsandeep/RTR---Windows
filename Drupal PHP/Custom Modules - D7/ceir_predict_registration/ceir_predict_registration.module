@@ -1,0 +1,797 @@
+<?php
+/**
+ * @file Implements form_alter() hook to check if a user has already registered for Predict.
+ * Change 'Add to cart' text to 'Register' if a product is of type 'Predict Registration'.
+ */
+
+
+/*
+ * Implementation of hook_form_FORMID_alter().
+ */
+function ceir_predict_registration_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state, $form_id) {
+  global $user;
+  $form['#validate'][] = 'ceir_predict_registration_cart_add_to_cart_form_validate';
+  $cart_product_ids = ceir_predict_registration_get_products_in_cart();
+  $registration_order_ids = ceir_predict_registration_get_users_registrations();
+  $handled = FALSE;
+  $line_item = $form_state['line_item'];
+  $product = commerce_product_load($line_item->commerce_product[LANGUAGE_NONE][0]['product_id']);
+  //unset($_SESSION['registration_users']);
+  // checking whether the product type is "Predict Registration"
+
+  if ($product->type == 'predict_registration') {
+    // Change the "Add to Cart" button text
+    $form['submit']['#value'] = t('Register');
+    $form['submit']['#attributes']['class'][] = 'btn-success';
+
+      if(! (empty($registration_order_ids))) {
+        $order_ids = array();
+        foreach($registration_order_ids as $delta) {
+          $order_ids[] = $delta->order_id;
+        }
+        $orders = commerce_order_load_multiple($order_ids, array('status' => 'completed'), TRUE) + commerce_order_load_multiple($order_ids, array('status' => 'invoiced'), TRUE);
+        foreach ($orders as $order) {
+    	  $product_ids = array();
+    	  foreach (entity_metadata_wrapper('commerce_order', $order)->commerce_line_items as $delta => $line_item_wrapper) {
+    	    if (in_array($line_item_wrapper->type->value(), commerce_product_line_item_types())) {
+			  if((substr($line_item_wrapper->commerce_product->sku->value(), 0, 2) == 'PR') && ($line_item_wrapper->commerce_product->status->value() == 1)) {
+			    $product_ids[] = $line_item_wrapper->commerce_product->raw();
+    		  }
+    	    }
+   		  }
+   	    }
+
+   	    if(! empty($product_ids))
+   	    {
+    	  if (in_array($product->product_id, $product_ids)) {
+    	    // Product has already been purchased!
+      	    // We only want users to register for a program once
+    	    $query = new EntityFieldQuery();
+    	    $query
+    	      ->entityCondition('entity_type', 'registration', '=')
+    	      ->propertyCondition('entity_id', $product->product_id, '=')
+    	      ->propertyCondition('entity_type', 'commerce_product', '=')
+    	      ->propertyCondition('user_uid', $user->uid, '=');
+    	      $result = $query->execute();
+
+    	      if (!empty($result)) {
+    		    $message = 'You have already registered for %product.';
+    		    $message_variables = array(
+    		      '%product' => $product->title,
+    		      );
+    		    // If the user has access to view their own registrations, include a link
+    		    // to the registration detail page.
+    		    $registration = registration_load(reset($result['registration'])->registration_id);
+    		    if (registration_access('view', $registration)) {
+    			  $message .= ' You can <a href="!uri">view your registration</a>.';
+    			  $uri = $registration->uri();
+    			  $message_variables['!uri'] = url($uri['path']);
+    		    }
+    		    drupal_set_message(t($message, $message_variables));
+    		    unset($form['submit']['#attributes']['class']);
+    		    $form['submit']['#value'] = t('Already registered');
+    		    $form['submit']['#attributes']['disabled'] = 'TRUE';
+    		    $handled = TRUE;
+    	      }
+
+    	      //	$form['#attributes']['disabled'] = 'disabled';
+    	    }
+          }
+        }
+
+      if (in_array($product->product_id, $cart_product_ids) && ! $handled) {
+        // Product is already in cart! We only want to allow a quantity of 1,
+        // so disable the submit button and change its text to Already in cart
+        unset($form['submit']['#attributes']['class']);
+        $form['submit']['#value'] = t('Already in cart');
+        $form['submit']['#attributes']['disabled'] = 'TRUE';
+        }
+
+  //Predict Sponsor
+   if(substr($product->sku, 0,3)=='PRS'){
+    global $user;
+    $usr = user_load($user->uid);
+    if ($usr->field_approved_predict_sponsor) {
+    $list_values;
+    array_unshift($form['#submit'] , 'sponsor_registration_add_to_cart_form_submit');
+    $allowed_guest_reg = $usr->field_approved_sponsor_guest_reg[LANGUAGE_NONE]['0']['value'];
+    $allowed_staff_reg = $usr->field_approved_sponsor_staff_reg[LANGUAGE_NONE]['0']['value'];
+    $contact_registered = false;
+    $_SESSION['contact_registered'] = false;
+    $query = new EntityFieldQuery();
+    $result = $query
+    ->entityCondition('entity_type','registration')
+    ->propertyCondition('entity_id', $product->product_id)
+    ->propertyCondition('author_uid', $user->uid)
+    ->execute();
+    if(!empty($result)) {
+      foreach ($result['registration'] as $delta) {
+        $sponsor_registration = registration_load($delta->registration_id);
+        $registration_wrapper = entity_metadata_wrapper('registration',$sponsor_registration);
+        $tmp = $registration_wrapper->field_attending_as->value();
+        if($registration_wrapper->field_attending_as->value() == 'SPONSOR GUEST') {
+          $allowed_guest_reg --;
+        }
+        else if($registration_wrapper->field_attending_as->value() == 'SPONSOR REPRESENTATIVE') {
+          $allowed_staff_reg --;
+        }
+        else if($registration_wrapper->field_attending_as->value() == 'Sponsor Contact') {
+          $contact_registered = true;
+          $_SESSION['contact_registered'] = true;
+        }
+      }
+    }
+
+    $_SESSION['allowed_guests'] = $allowed_guest_reg;
+    $_SESSION['allowed_staff'] = $allowed_staff_reg;
+    $guests = '<strong>Guests Registered:</strong> ' . ($usr->field_approved_sponsor_guest_reg[LANGUAGE_NONE]['0']['value'] - $allowed_guest_reg) . ' of ' . $usr->field_approved_sponsor_guest_reg[LANGUAGE_NONE]['0']['value'];
+    $reps = '<strong>Reps Registered:</strong> ' . ($usr->field_approved_sponsor_staff_reg[LANGUAGE_NONE]['0']['value'] - $allowed_staff_reg) . ' of ' . $usr->field_approved_sponsor_staff_reg[LANGUAGE_NONE]['0']['value'];
+    $form['guests'] = array(
+        '#markup' => t($guests),
+        '#prefix' => '<div>',
+        '#suffix' => '</div>',
+    );
+    $form['sponsors'] = array(
+        '#markup' => t($reps),
+        '#prefix' => '<div>',
+        '#suffix' => '</div>',
+    );
+
+    $form['#attached']['js'] = array(
+      drupal_get_path('module', 'ceir_predict_registration') . '/ceir_predict_registration.js',
+    );
+
+    $form['#prefix'] = '<div id= #sponsor-add-to-cart>';
+    $form['#suffix'] = '</div>';
+
+    $form['registrant_type'] = array(
+      '#title' => t('Add Registration for'),
+      '#type' => 'select',
+      '#description' => 'Choose whether registrant is existing user or new user.',
+      '#options' =>  array('_NONE' => 'Select', 'EXISTING_USER' => 'Existing User','NEW_USER' => 'New User'),
+      '#default_value' => array('_NONE' => '--Select--'),
+      );
+
+    $form['existing_user_information'] = array(
+        '#title' => t('User Information'),
+        '#type' => 'fieldset',
+        '#collapsible' => TRUE,
+        '#tree' => TRUE,
+        '#prefix' => '<div id="existing-user-fieldset">',
+        '#suffix' => '</div>',
+        '#description' => t('Registrant information'),
+        '#states' => array(
+          'visible' => array(
+            ':input[name="registrant_type"]' => array('value' => 'EXISTING_USER'),
+          ),
+        ),
+     );
+
+    $form['existing_user_information']['user_autocomplete'] = array(
+        '#title' => t('User Name'),
+        '#type' => 'textfield',
+        '#description' => t('Select a user by typing their username to get a list of matches.'),
+        '#autocomplete_path' => 'user/autocomplete',
+        '#states' => array(
+        ),
+    );
+
+    $form['existing_user_information']['attending_as'] = array(
+      '#title' => t('Attending as'),
+      '#type' => 'select',
+      '#description' => 'Select whether this user is attending as Guest or Representative',
+      '#options' => array('_NONE' => '--Select--', 'SPONSOR GUEST' => 'Sponsor Guest', 'SPONSOR REPRESENTATIVE' => 'Sponsor Representative'),
+      '#default_value' => array('_NONE' => '--Select--')
+    );
+
+    $form['new_user_information'] = array(
+        '#title' => t('New User Information'),
+        '#type' => 'fieldset',
+        '#collapsible' => TRUE,
+        '#tree' => TRUE,
+        '#description' => t('Registrant information'),
+        '#states' => array(
+          'visible' => array(
+            ':input[name="registrant_type"]' => array('value' => 'NEW_USER'),
+          ),
+        ),
+     );
+
+    $form['new_user_information']['user_uname'] = array(
+      '#title' => t('User Name'),
+      '#type' => 'textfield',
+     // '#required' => TRUE,
+      '#description' => 'New users user id.',
+    );
+
+    $form['new_user_information']['user_fname'] = array(
+      '#title' => t('First Name'),
+      '#type' => 'textfield',
+    );
+
+    $form['new_user_information']['user_lname'] = array(
+      '#title' => t('Last Name'),
+      '#type' => 'textfield',
+    );
+
+    $form['new_user_information']['email'] = array(
+      '#title' => t('Email'),
+      '#type' => 'textfield',
+     // '#required' => TRUE,
+      '#rules' => 'email',
+    );
+
+    $form['new_user_information']['title'] = array(
+      '#title' => t('Title'),
+      '#type' => 'textfield',
+    );
+
+    $form['new_user_information']['company'] = array(
+      '#title' => t('Company Name'),
+      '#type' => 'textfield',
+    );
+
+    $form['new_user_information']['attending_as'] = array(
+      '#title' => t('Attending as'),
+      '#type' => 'select',
+      '#description' => 'Select whether this user is attending as Guest or Representative',
+      '#options' => array('_NONE' => '--Select--', 'SPONSOR GUEST' => 'Sponsor Guest', 'SPONSOR REPRESENTATIVE' => 'Sponsor Representative'),
+      '#default_value' => array('_NONE' => '--Select--')
+    );
+
+   /* $form['new_user_information']['add'] = array(
+        '#type' => 'submit',
+        '#ajax' => array(
+            'callback' => 'add_user_to_table',
+            'wrrapper' => 'box',
+        ),
+        '#value' => 'user-list-table',
+    );*/
+
+    $form['existing_user_information']['add'] = array(
+      '#type' => 'button',
+      '#ajax' => array(
+          'callback' => 'add_user_to_table',
+          //'wrapper' => 'user-list-table',
+      ),
+      '#value' => 'Add',
+    );
+
+    $form['new_user_information']['add'] = array(
+      '#type' => 'button',
+      '#ajax' => array(
+          'callback' => 'add_user_to_table',
+          //'wrapper' => 'user-list-table',
+      ),
+      '#value' => 'Add',
+    );
+
+
+    $form['table'] = array(
+        '#theme' => 'ceir_predict_registration_form_table',
+        '#header' => array(t('Name'), t('User Name'), t('Email'), t('Attending as'), t('Remove')),
+        '#prefix' => '<div id="user-list-table">',
+        '#suffix' => '</div>',
+        '#rows' => $_SESSION['registration_users'],
+
+    );
+
+
+
+    /*
+
+    unset($form['line_item_fields']['field_predict_sponsor_guest_quan']['und']['#options']);
+    $form['line_item_fields']['field_predict_sponsor_guest_quan']['#access'] = true;
+    $form['line_item_fields']['field_predict_sponsor_guest_quan']['#commerce_cart_settings']['field_access'] = 1;
+    for ($i=0; $i <= $allowed_guest_reg; $i++){
+      //$list_values[] = $i;
+      $form['line_item_fields']['field_predict_sponsor_guest_quan']['und']['#options'][] = $i;
+    }
+    /*$form['allowed_guest'] = array(
+      '#title' => t('Select number of guests'),
+      '#type' => 'select',
+      '#description' => 'Select the number guests of you wish to register.',
+      '#options' =>  $list_values,
+      );*/
+
+    /*
+    unset($form['line_item_fields']['field_predict_sponsor_staff_quan']['und']['#options']);
+    $form['line_item_fields']['field_predict_sponsor_staff_quan']['#access'] = true;
+    $form['line_item_fields']['field_predict_sponsor_staff_quan']['#commerce_cart_settings']['field_access'] = 1;
+    unset($list_values);
+    for ($i=0; $i <= $allowed_staff_reg; $i++){
+      //$list_values[] = $i;
+      $form['line_item_fields']['field_predict_sponsor_staff_quan']['und']['#options'][] = $i;
+    }
+    /*$form['allowed_staff'] = array(
+      '#title' => t('Select number of staff members'),
+      '#type' => 'select',
+      '#description' => 'Select the number of staff members you wish to register.',
+      '#options' => $list_values,
+      );*/
+  //  $form['quantity']['#value'] =2;
+    }
+   }
+  }
+  }
+
+
+/**
+ * Implementation of hook_theme().
+ */
+function ceir_predict_registration_theme() {
+  return array(
+    'ceir_predict_registration_form_table' => array(
+      // The renderable element is the form.
+      'render element' => 'form',
+    ),
+  );
+}
+
+/**
+ * Theme callback for the form table.
+ */
+function theme_ceir_predict_registration_form_table(&$variables) {
+  // Get the useful values.
+  $form = $variables['form'];
+  $rows = $form['#rows'];
+  $header = $form['#header'];
+
+  // Setup the structure to be rendered and returned.
+  $content = array(
+    '#theme' => 'table',
+    '#header' => $header,
+    '#rows' => array(),
+    '#empty' => t('No registrants added yet'),
+  );
+
+  // Traverse each row.  @see element_chidren().
+  foreach ($rows as $row_index) {
+    $row = array();
+    // Add fname+lname, user_name, email, attending_as to each row.  @see element_children().
+    $remove_btn = array(
+      '#type' => 'button',
+      '#ajax' => array(
+          'callback' => 'remove_user_from_table',
+          //'wrapper' => 'user-list-table',
+      ),
+      '#value' => 'Remove',
+      '#attributes' => array('class' => array('btn-danger')),
+    );
+    $name = array();
+    $name['#markup'] = $row_index['fname']['#markup'] . ' ' . $row_index['lname']['#markup'];
+    $row[] = drupal_render($name);
+    $row[] = drupal_render($row_index['user_name']);
+    $row[] = drupal_render($row_index['email']);
+    $row[] = drupal_render($row_index['attending_as']);
+    $row[] = drupal_render($remove_btn);
+    // Add the row to the table.
+    $content['#rows'][] = $row;
+  }
+
+  // Redner the table and return.
+  return drupal_render($content);
+}
+
+
+/*
+ * Callback handler for Add button.
+ * Adds user to the table.
+ */
+function add_user_to_table($form, $form_state) {
+  $response = array('#type' => 'ajax',);
+  if(add_user_to_table_validate($form, $form_state))
+  {
+    $user_type = $form_state['values']['registrant_type'];
+    if(isset($user_type)) {
+      switch ($user_type) {
+        case 'EXISTING_USER':
+          $account = user_load_by_name($form_state['values']['existing_user_information']['user_autocomplete']);
+          $_SESSION['registration_users'][] = array(
+              'fname' => array('#markup' => $account->field_first_name['und']['0']['value']),
+              'lname' => array('#markup' => $account->field_last_name['und']['0']['value']),
+              'user_name' => array('#markup' => $form_state['values']['existing_user_information']['user_autocomplete']),
+              'email' => array('#markup' => $account->mail),
+              'attending_as' => array('#markup' => $form_state['values']['existing_user_information']['attending_as']),
+              'user_type' => array('#markup' => 'EXISTING_USER'),
+          );
+
+          reset_existing_user_fields($form, $form_state);
+          $response['#commands'][] = ajax_command_insert('#existing-user-fieldset', drupal_render($form['existing_user_information']));
+          $form['table']['#rows'] = $_SESSION['registration_users'];
+          $response['#commands'][] = ajax_command_insert('#user-list-table', drupal_render($form['table']));
+          drupal_set_message('User added.');
+          // $form_state['#rebuild'] =TRUE;
+          break;
+
+        case 'NEW_USER':
+          $_SESSION['registration_users'][] = array(
+              'fname' => array('#markup' => $form_state['values']['new_user_information']['user_fname']),
+              'lname' => array('#markup' => $form_state['values']['new_user_information']['user_lname']),
+              'user_name' => array('#markup' => $form_state['values']['new_user_information']['user_uname']),
+              'email' => array('#markup' => $form_state['values']['new_user_information']['email']),
+              'attending_as' => array('#markup' => $form_state['values']['new_user_information']['attending_as']),
+              'title' => array('#markup' => $form_state['values']['new_user_information']['title']),
+              'company' => array('#markup' => $form_state['values']['new_user_information']['company']),
+              'user_type' => array('#markup' => 'NEW_USER'),
+          );
+          $form['table']['#rows'] = $_SESSION['registration_users'];
+          $response['#commands'][] = ajax_command_insert('#user-list-table', drupal_render($form['table']));
+          break;
+      }
+    }
+
+
+  }
+  $tmp = form_get_errors();
+  $form['table']['#rows'] = $_SESSION['registration_users'];
+  $response['#commands'][] = ajax_command_prepend('#user-list-table', theme('status_messages'));
+  return $response;
+}
+
+/*
+ * Callback function for remove registrant form table.
+ */
+function remove_user_from_table($form, $form_state) {
+  $a = 1;
+}
+
+/*
+ * Validation for add user callback.
+ */
+function add_user_to_table_validate(&$form, &$form_state) {
+  $user_type = $form_state['values']['registrant_type'];
+  if(isset($user_type)) {
+    switch ($user_type) {
+      case 'EXISTING_USER':
+        $account = user_load_by_name($form_state['values']['existing_user_information']['user_autocomplete']);
+        if($account !== FALSE && $form_state['values']['existing_user_information']['user_autocomplete'] !== '') {
+          $query = new EntityFieldQuery();
+          $query
+    	      ->entityCondition('entity_type', 'registration', '=')
+    	      ->propertyCondition('entity_id', $form_state->line_item['commerce_product']['und']['0']['product_id'], '=')
+    	      ->propertyCondition('entity_type', 'commerce_product', '=')
+    	      ->propertyCondition('user_uid', $account->uid, '=');
+    	  $result = $query->execute();
+          if(count($result) > 0) {
+            form_set_error('existing_user_information', 'This user is already registered.');
+          }
+
+        }
+        else {
+          form_set_error('existing_user_information', 'Invalid user.');
+        }
+
+        if($form_state['values']['existing_user_information']['attending_as'] == '_NONE') {
+          form_set_error('attending_as', 'Please select attendee type.');
+        }
+
+        if(search_table_for_user_name($form_state['values']['existing_user_information']['user_autocomplete'], $_SESSION['registration_users'])) {
+          form_set_error('user_uname', 'You have already added an user with \'' . $form_state['values']['existing_user_information']['user_autocomplete'] . '\' name .');
+        }
+
+
+        break;
+
+      case 'NEW_USER':
+        if ($form_state['values']['new_user_information']['user_uname'] == '') {
+          form_set_error('user_uname', 'User Name field is required.');
+        }
+        else {
+          $account = user_load_by_name($form_state['values']['new_user_information']['user_uname']);
+          if ($account !== FALSE) {
+            form_set_error('user_uname', 'User with \'' . $form_state['values']['new_user_information']['user_uname'] . '\' name already exists.');
+          }
+        }
+        if ($form_state['values']['new_user_information']['email'] == '') {
+          form_set_error('email', 'Email field is required.');
+        }
+        else {
+          $account = user_load_by_mail($form_state['values']['new_user_information']['email']);
+          if ($account !== FALSE) {
+            form_set_error('email', 'User with \'' . $form_state['values']['new_user_information']['email'] . '\' email already exists.');
+          }
+        }
+        if($form_state['values']['new_user_information']['attending_as'] == '_NONE') {
+          form_set_error('attending_as', 'Please select attendee type.');
+        }
+
+        if(search_table_for_email($form_state['values']['new_user_information']['email'],$_SESSION['registration_users'])) {
+          form_set_error('email', 'You have already added an user with \'' . $form_state['values']['new_user_information']['email'] . '\' email .');
+        }
+
+        if(search_table_for_user_name($form_state['values']['new_user_information']['user_uname'], $_SESSION['registration_users'])) {
+          form_set_error('user_uname', 'You have already added an user with \'' . $form_state['values']['new_user_information']['user_uname'] . '\' name .');
+        }
+
+    }
+    if (!form_get_errors()) {
+      $allowed_guests = $_SESSION['allowed_guests'];
+      $allowed_staff = $_SESSION['allowed_staff'];
+      foreach ($_SESSION['registration_users'] as $user) {
+        if($user['attending_as']['#markup'] == 'SPONSOR GUEST') {
+          $allowed_guests--;
+        }
+        else if($user['attending_as']['#markup'] == 'SPONSOR REPRESENTATIVE') {
+          $allowed_staff--;
+        }
+      }
+      if ($user_type == 'NEW_USER') {
+        if(($form_state['values']['new_user_information']['attending_as'] == 'SPONSOR GUEST') && ($allowed_guests < 1)) {
+          form_set_error('existing_user_information' , 'You have reached maximum number of allowed guest registrations.');
+        }
+        else if (($form_state['values']['new_user_information']['attending_as'] == 'SPONSOR REPRESENTATIVE') && ($allowed_staff < 1)) {
+          form_set_error('existing_user_information', 'You have reached maximum number of allowed representative registrations.');
+        }
+      }
+      else if ($user_type == 'EXISTING_USER') {
+        if(($form_state['values']['existing_user_information']['attending_as'] == 'SPONSOR GUEST') && ($allowed_guests < 1)) {
+          form_set_error('existing_user_information' , 'You have reached maximum number of allowed guest registrations.');
+        }
+        else if (($form_state['values']['existing_user_information']['attending_as'] == 'SPONSOR REPRESENTATIVE') && ($allowed_staff < 1)) {
+          form_set_error('existing_user_information', 'You have reached maximum number of allowed representatives registrations.');
+        }
+      }
+    }
+  }
+
+  if(form_get_errors()) {
+    return  FALSE;
+  }
+  else {
+    return TRUE;
+  }
+}
+
+
+
+/*
+ * Check if user is already added in table.
+ */
+function search_table_for_email($email, $array) {
+  foreach ($array as $delta) {
+    if($delta['email']['#markup'] == $email)
+      return TRUE;
+  }
+}
+
+function search_table_for_user_name($uname, $array) {
+  foreach ($array as $delta) {
+    if($delta['user_name']['#markup'] == $uname)
+      return TRUE;
+  }
+}
+
+/*
+ * Reset existing user fields.
+ */
+function reset_existing_user_fields(&$form, &$form_state) {
+  $form['existing_user_information']['user_autocomplete']['#value'] = '';
+  $form['existing_user_information']['attending_as']['#value'] = array('_NONE', '--Select--');
+}
+
+function sponsor_registration_add_to_cart_form_submit($form, &$form_state) {
+  $form_state['values']['quantity'] = count($_SESSION['registration_users']);
+ // if(!$_SESSION['contact_registered']) {
+   // $form_state['values']['quantity'] ++;
+  //}
+}
+
+
+
+function ceir_predict_registration_form_commerce_checkout_form_registration_alter(&$form, &$form_state, $form_id) {
+  global $user;
+  $usr = user_load($user->uid);
+  if ($usr->field_approved_predict_sponsor) {
+  //$line_item = commerce_line_item_load($form_state['order']->commerce_line_items['und']['0']['line_item_id']);
+  $sponsor_guest_quantity = 0;
+  $sponsor_staff_quantity = 0;
+  $guest_info = array();
+  $staff_info = array();
+  $found_key = null;
+  foreach ($_SESSION['registration_users'] as $registrant) {
+    if ($registrant['attending_as']['#markup'] == 'SPONSOR GUEST') {
+      $sponsor_guest_quantity ++;
+      $guest_info[] = $registrant;
+    }
+    else if ($registrant['attending_as']['#markup'] == 'SPONSOR REPRESENTATIVE') {
+      $sponsor_staff_quantity ++;
+      $staff_info[] = $registrant;
+    }
+  }
+  foreach(array_keys($form['registration_information']) as $key) {
+    if(strpos($key, "prod-PRS") != false) {
+        //Key matches, test value.
+      $found_key = $key;
+      break;
+      }
+    }
+
+  if( !is_null($found_key) ) {
+    //$form contains sponsor registration information.
+    $users = array_merge($guest_info, $staff_info);
+    $index = 0;
+    foreach ($form['registration_information'][$found_key] as &$registration_information) {
+     $registration_information['field_attending_as']['und']['#default_value'] = $users[$index]['attending_as']['#markup'];
+     $registration_information['field_attending_as']['#disabled'] = true;
+     $registration_information['field_attending_as']['#weight'] = -1;
+     $registration_information['field_attending_as']['und']['#attributes'] = array('readonly' => 'readonly');
+     if($users[$index]['user_type']['#markup'] == 'EXISTING_USER') {
+       $registration_information['register_for']['#default_value'] = 'registration_registrant_type_user';
+       $registration_information['register_for']['#attributes'] = array('readonly' => 'readonly');
+       $registration_information['user']['#default_value'] = $users[$index]['user_name']['#markup'];
+       $registration_information['user']['#type'] = 'hidden';
+     }
+     elseif ($users[$index]['user_type']['#markup'] == 'NEW_USER') {
+       $registration_information['register_for']['#default_value'] = 'registration_registrant_type_anon';
+       $registration_information['register_for']['#attributes'] = array('readonly' => 'readonly');
+       $registration_information['anon_mail']['#default_value'] = $users[$index]['email']['#markup'];
+       $registration_information['anon_mail']['#type'] = 'hidden';
+     }
+     $registration_information['field_user_name']['und']['0']['value']['#default_value'] = $users[$index]['user_name']['#markup'];//$users[$index]['user_name']['#markup'];
+     $registration_information['field_user_name']['und']['0']['value']['#attributes'] = array('readonly' => 'readonly');
+     $registration_information['field_first_name']['und']['0']['value']['#default_value'] = $users[$index]['fname']['#markup'];
+     $registration_information['field_first_name']['und']['0']['value']['#attributes'] = array('readonly' => 'readonly');
+     $registration_information['field_last_name']['und']['0']['value']['#default_value'] = $users[$index]['lname']['#markup'];
+     $registration_information['field_last_name']['und']['0']['value']['#attributes'] = array('readonly' => 'readonly');
+     $registration_information['field_title_member']['und']['0']['value']['#default_value'] = $users[$index]['title']['#markup'];
+     $registration_information['field_title_member']['und']['0']['value']['#attributes'] = array('readonly' => 'readonly');
+     $registration_information['field_company_member']['und']['0']['value']['#default_value'] =$users[$index]['company']['#markup'];
+     $registration_information['field_company_member']['und']['0']['value']['#attributes'] = array('readonly' => 'readonly');
+     $registration_information['field_email']['und']['0']['email']['#default_value'] = $users[$index]['email']['#markup'];
+     $registration_information['field_email']['und']['0']['email']['#attributes'] = array('readonly' => 'readonly');
+     $index ++;
+     //$registration_information['field_attending_as']['und']['#type'] = 'value';
+
+     /* if($guest > 0) {
+        $registration_information['field_attending_as']['und']['#default_value'] = 'SPONSOR GUEST';
+        $registration_information['field_attending_as']['#disabled'] = true;
+        $registration_information['field_attending_as']['#weight'] = -1;
+        $registration_information['field_attending_as']['#type'] = 'value';
+        $registration_information['register_for']['#title'] = 'Select Guest';
+        unset($registration_information['register_for']['#options']['registration_registrant_type_me']);
+        //$registration_information['field_attending_as']['und']['#value_key'] = "Sponsor Guest";
+        $guest --;
+      }
+      else if($staff > 0) {
+        $registration_information['field_attending_as']['und']['#default_value'] = "Sponsor Representative";
+        //$registration_information['field_attending_as']['und']['#value_key'] = "Sponsor Representative";
+        $registration_information['field_attending_as']['#disabled'] = true;
+        $registration_information['field_attending_as']['#weight'] = -1;
+        $registration_information['register_for']['#title'] = 'Select Representative';
+        unset($registration_information['register_for']['#options']['registration_registrant_type_me']);
+        $staff --;
+      }
+      else if(count($form['registration_information'][$found_key]) > ($sponsor_guest_quantity + $sponsor_staff_quantity)) {
+        $registration_information['field_attending_as']['und']['#default_value'] = "Sponsor Contact";
+        //$registration_information['field_attending_as']['und']['#value_key'] = "Sponsor Representative";
+        $registration_information['field_attending_as']['#disabled'] = true;
+        $registration_information['field_attending_as']['#weight'] = -1;
+        $registration_information['register_for']['#default'] = 'Select Representative';
+        $registration_information['register_for']['#default_value'] = "registration_registrant_type_me";
+        $registration_information['register_for']['#disabled'] = true;
+        $staff --;
+      }*/
+    }
+  }
+  }
+}
+
+
+
+/**
+ * Custom validation function to check if a product is already present in cart.
+ */
+function ceir_predict_registration_cart_add_to_cart_form_validate($form, &$form_state) {
+	if (!isset($form['product_id'])) {
+		return;
+	}
+	global $user;
+	$cart = commerce_cart_order_load($user->uid);
+	$in_cart = FALSE;
+	$product_ids = array();
+	if ($cart) {
+		foreach (entity_metadata_wrapper('commerce_order', $cart)->commerce_line_items as $delta => $line_item_wrapper) {
+			if (in_array($line_item_wrapper->type->value(), commerce_product_line_item_types())) {
+				$product_ids[] = $line_item_wrapper->commerce_product->raw();
+
+			}
+		}
+	}
+	if (in_array($form['product_id']['#value'], $product_ids)) {
+		$in_cart = TRUE;
+	}
+	if ($in_cart) {
+		form_set_error('submit', t('This product is already in your cart.'));
+	}
+//form_set_error('submit', t('Invalid quantity selected. Please select valide Representative and Guest quantities'));
+	$guest = $form_state['values']['line_item_fields']['field_predict_sponsor_guest_quan']['und']['0']['value'];
+	$staff = $form_state['values']['line_item_fields']['field_predict_sponsor_staff_quan']['und']['0']['value'];
+    $product = commerce_product_load($form['product_id']['#value']);
+    $usr = user_load($user->uid);
+    $contact_registered = $_SESSION['contact_registered'];
+    if((substr($product->sku, 0,3)=='PRS') && ($usr->field_approved_predict_sponsor)){
+	 if (($guest == 0) && ($staff == 0) && ($contact_registered)) {
+	   // form_set_error('submit', t('Invalid quantity selected. Please select valide Representative and Guest quantities'));
+	 }
+    }
+
+}
+
+
+
+
+
+
+/**
+ * Return the product_id values for all products in the cart
+ *
+ * @return
+ *  An array of product ids
+ */
+function ceir_predict_registration_get_products_in_cart() {
+  	$cart_product_ids = &drupal_static(__FUNCTION__);
+
+  	if (!isset($cart_product_ids)) {
+    	global $user;
+    	$cart_product_ids = array();
+    	$order = commerce_cart_order_load($user->uid);
+    	if ($order) {
+      		$order_wrapper = entity_metadata_wrapper('commerce_order', $order);
+      		foreach ($order_wrapper->commerce_line_items as $delta => $line_item_wrapper) {
+        	$product_wrapper = $line_item_wrapper->commerce_product;
+        	$cart_product_ids[] = $product_wrapper->product_id->value();
+      		}
+    	}
+    	$cart_product_ids = array_unique($cart_product_ids);
+  	}
+
+  	return $cart_product_ids;
+}
+
+/**
+ * Return the registration_order_id values for all registration the user has already registered
+ *
+ * @return
+ *  An array of objects containing registration order ids
+ */
+function ceir_predict_registration_get_users_registrations() {
+  	$registration_order_ids = &drupal_static(__FUNCTION__);
+
+   	if (!isset($registration_order_ids)) {
+    	global $user;
+    	$query = db_select('registration', 'pred_reg');
+		$query->condition('pred_reg.user_uid', $user->uid, '=')
+			//->condition('pred_reg.state', 'complete', '=')
+			->condition('pred_reg.entity_type', 'commerce_product', '=')
+          	->fields('pred_reg',array('order_id'))
+			->fields('pred_reg', array('registration_id'));
+    	$result = $query->execute();
+    	$registration_order_ids = $result->fetchAll();
+  	}
+
+   	return $registration_order_ids;
+}
+
+/**
+ * Disable quatity field on cart view page.
+ */
+
+function ceir_predict_registration_form_views_form_commerce_cart_form_default_alter(&$form, &$form_state, $form_id) {
+	global $user;
+		$account = user_load($user->uid);
+		if (empty($form['edit_quantity'])) {
+		// The quantity field is not present on the view.
+			return;
+		}
+		foreach (element_children($form['edit_quantity']) as $key) {
+			$quantity = $form['edit_quantity'][$key]['#default_value'];
+			$form['edit_quantity'][$key]['#type'] = 'value';
+			$form['edit_quantity'][$key]['#suffix'] = check_plain($quantity);
+	}
+}
+
+function ceir_predict_registration_commerce_checkout_complete($order) {
+  unset($_SESSION['registration_users']);
+}
+

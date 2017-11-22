@@ -1,0 +1,5 @@
+shm_mmr.admin_settings:
+  title: 'MMR Settings'
+  description: 'Configure the Manufacturer Report Settings'
+  parent: system.admin_config_system
+  route_name: shm_mmr.mmr_settings

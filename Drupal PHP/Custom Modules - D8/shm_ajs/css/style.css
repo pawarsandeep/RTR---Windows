@@ -1,0 +1,142 @@
+#panel-body-liferaft-general-details .form-item, #panel-body-containers .form-item, #panel-body-inflation-equipment .form-item,
+#panel-body-life-raft .form-item, #panel-body-survival-pack .form-item, #panel-body-other .form-item,
+#panel-body-revenue-details .form-item{
+    width: 29%;
+    display: inline-block;
+    margin: 0 2%;
+    padding: 11px 0;
+}
+
+#panel-body-pressure-test .relief-valve-blow-off, .relief-valve-reset {
+    width: 45%;
+    display: inline-block;
+    margin: 0 2%;
+}
+
+#panel-body-pressure-test .form-item.field-liferaft-oem-certificateno {
+    width: 47%;
+    display: inline-block;
+    margin: 1%;
+}
+
+#panel-body-pressure-test .header {
+    border-bottom: 2px solid gray;
+}
+
+.form-item.tests .select, .form-item.tests .form-subitem {
+    width: 49%;
+    display: inline-block;
+}
+
+.table.table-bordered td{
+    border-color: whitesmoke;
+}
+.liferaft-vessel-autocomplete {
+    z-index: 999999;
+}
+.liferaft-manufacturer-autocomplete {
+	 z-index: 999999;
+	     width: 42%!important;
+}
+.auto-complete-container.vessel-autocomplete, .auto-complete-container.liferaft-manufacturer-autocomplete {
+	z-index:100000;
+}
+
+.auto-complete.ui-autocomplete {
+    padding: 3px;
+    border: 0;
+	border-radius: 0;
+}
+.liferaft-vessel-autocomplete li.auto-complete-item.ng-scope {
+    display: block;
+}
+.liferaft-vessel-autocomplete ul.auto-complete-results {
+    padding-left: 0;
+}
+.liferaft-manufacturer-autocomplete li.auto-complete-item.ng-scope {
+    display: block;
+}
+.liferaft-manufacturer-autocomplete ul.auto-complete-results {
+    padding-left: 0;
+}
+form#newCondemnationJobJob .liferaft-new-job {
+    margin-bottom: 10px;
+}
+
+form#newCondemnationJobJob .form-item.field-acceptance-date input.form-date.form-control.ng-empty.ng-touched.ng-dirty.ng-invalid.ng-invalid-date {
+    width: auto;
+}
+.liferaft-vessel-autocomplete {
+    z-index: 999999;
+}
+.liferaft-manufacturer-autocomplete {
+    z-index: 999999;
+    width: 42%!important;
+}
+.liferaft-type-autocomplete {
+    z-index: 999999;
+    width: 15%!important;
+}
+
+/*-----------liferaft sr no autocomplete ------*/
+.path-condemnation div#liferaft-autocomplete input {
+    width: 33%;
+}
+.path-liferaft div#liferaft-autocomplete input {
+    width: 31%;
+}
+.path-liferaft div#liferaft-autocomplete input,.path-condemnation div#liferaft-autocomplete input  {
+    margin-bottom: 10px;
+    border-radius: 4px;
+    line-height: 38px;
+}
+.path-liferaft div#liferaft-autocomplete .btn-primary, .path-condemnation div#liferaft-autocomplete .btn-primary{
+    color: #ffffff;
+    background-color: #158cba;
+    border-color: #127ba3;
+    line-height: 28px;
+}
+
+.path-liferaft .liferaft-autocomplete  ul.auto-complete-results {
+    background: #fff;
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    color: inherit;
+    font-family: "Source Sans Pro","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    list-style: none;
+    min-width: 160px;
+    text-align: left;
+    padding: 3px;
+    border: 0;
+    border-radius: 0;
+}
+.path-liferaft .form-item div#liferaft-autocomplete .input-group-addon .glyphicon,
+.path-condemnation .form-item div#liferaft-autocomplete .input-group-addon .glyphicon{
+    color: #777;
+    opacity: .5;
+    transition: 150ms color,150ms opacity;
+    margin-left: -20px;
+    padding: 2% 0;
+    margin-right: 5px;
+    top: 0px;
+}
+.path-liferaft .form-item div#liferaft-autocomplete .input-group-addon .glyphicon.glyphicon-spin,
+.path-condemnation .form-item div#liferaft-autocomplete .input-group-addon .glyphicon.glyphicon-spin {
+    color: #337ab7;
+    opacity: 1;
+    padding: 2% 0;
+    background-position: 100% 4px;
+    margin-left: -20px;
+}
+
+div#liferaft-autocomplete {
+    width: 20%;
+    display: inline-block;
+    padding-right: 10px;
+}
+.path-liferaft div#liferaft-autocomplete input {
+    width: 100%;
+}
+.path-condemnation div#liferaft-autocomplete input {
+    width: 100%;
+}

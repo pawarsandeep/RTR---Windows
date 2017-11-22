@@ -1,0 +1,7 @@
+name: 'Lifeboat Monthly Manufacturer Report'
+description: 'Generates manufacturer report for every month.'
+package: SHM
+core: 8.x
+type: module
+dependencies:
+  - swiftmailer

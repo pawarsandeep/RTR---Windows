@@ -1,0 +1,94 @@
+<?php
+/**
+ * @file SHM Monthly Manufacturer Report.
+ */
+
+use Drupal\Core\Mail\MailFormatHelper;
+
+/**
+ * Implements hook_theme()
+ */
+function shm_mmr_theme($existing, $type, $theme, $path) {
+  return array(
+    'shm_mmr_pdf' => array(
+      'variables' => array(
+        'cover' => NULL,
+        'report_id' => NULL,
+        'month_year' => NULL,
+        'manufacturer' => NULL,
+        'report' => NULL,
+        'mmr_css' => NULL,
+      ),
+    )
+  );
+}
+
+/**
+ * Implements hook_entity_extra_field_info_alter().
+ */
+function shm_mmr_entity_extra_field_info_alter(&$info) {
+    $info['eform_submission']['lifeboat_monthly_manufacturer_re']['display']['send_mmr'] = array(
+      'label' => 'Send Report',
+      'description' => 'Provides a button to send Manufacturer Report.',
+      'weight' => 0,
+      'visible' => FALSE,
+    );
+    $a = 10;
+}
+
+/**
+ * Implements hook_entity_view_alter().
+ */
+function shm_mmr_entity_view_alter(array &$build, Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display) {
+    if ($display->getComponent('send_mmr')) {
+    $settings = $display->getComponent('send_mmr');
+    if (!(int)$entity->get('field_mail_sent')->getString() && (!empty($entity->get('field_manuf_report_send_to')->getString()))) {
+      $build['send_mmr'] = \Drupal\Core\Link::createFromRoute('Send Report', 'shm_mmr.send_report', ['eform_submission' => $entity->id()],array('attributes' => array('class'=> 'mmr-rpt btn btn-success')))
+        ->toRenderable();
+      $build['send_mmr']['#weight'] = $settings['weight'];
+
+    }
+  }
+  
+  $entity_type = $entity->getEntityTypeId();
+
+if($entity_type == 'eform_submission')
+{
+	$cert_type = $entity->get('type')->getString();
+	if($cert_type == 'certificate')
+	{
+		$state = $entity->get('moderation_state')->getString();
+		//drupal_set_message($state);
+		if($state != 'approved')
+		{
+			$build['entity_print_view']['#url']->setOption('attributes',array('class'=> 'disable-download-link'));
+		}
+	}
+	
+}
+
+}
+
+/**
+ * Implements hook_entity_prepare_view().
+ */
+function shm_mmr_entity_prepare_view($entity_type_id, array $entities, array $displays, $view_mode) {
+  $a = 10;
+}
+
+/**
+ * Implements hook_mail().
+ */
+function shm_mmr_mail($key, &$message, $params) {
+  switch ($key){
+    case 'send_mmr':
+      $message['body'][] = MailFormatHelper::htmlToText($params['body']);
+      $message['subject'] = $params['subject'];
+      $message['Sender'] = $params['headers']['From'];
+      $message['from'] = $params['headers']['From'];
+      $message['headers']['Cc'] = $params['headers']['Cc'];//$params['headers']['cc'];
+      $message['headers']['bcc'] = $params['headers']['Bcc'];//$params['headers']['Bcc'];
+      $message['files'] = $params['files'];
+  }
+}
+

@@ -1,0 +1,47 @@
+<?php
+
+function ceir_pricelist_form_commerce_product_ui_product_form_alter(&$form, &$form_state){
+
+	$product_sku = $form_state['commerce_product']->sku;
+
+	$error_messages = "";
+
+	if(isset($product_sku) && $product_sku!='' ){
+
+	  $member_price_list=db_query('select * from commerce_pricelist_item where sku='.$product_sku.' and pricelist_id=6')->fetchAll();
+
+	  if (empty($member_price_list)){
+
+	  	$error_messages .= "Member Price is not set in Pricelist. <br/>";
+	  }
+
+	  $non_member_price_list = db_query('select * from commerce_pricelist_item where sku='.$product_sku.' and pricelist_id=11')->fetchAll();
+
+	  if (empty($non_member_price_list)){
+
+	  	$error_messages .= "Non Member Price is not set in Pricelist. <br/>";
+	  }
+
+	  if (sizeof($member_price_list) > 1)
+	  {
+	  	$error_messages .= "There are multiple values of Price in Member Pricelist. <br/>";
+
+	  }
+
+	 if (sizeof($non_member_price_list) > 1)
+	  {
+	  	$error_messages .= "There are multiple values of Price in Non Member Pricelist. <br/>";
+
+	  }
+
+	if(strlen($error_messages) > 0){
+
+     drupal_set_message($error_messages, $type = 'warning');
+	}
+
+	}
+
+
+  return $form;
+
+}

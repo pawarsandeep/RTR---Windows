@@ -1,0 +1,5 @@
+services:
+  serializer.normalizer.ahm_ajs.json:
+    class: Drupal\shm_ajs\normalizer\JsonDenormalizer
+    tags:
+      - { name: normalizer }

@@ -1,0 +1,34 @@
+shm_d3_visualization.service_engg_jobs_bar:
+  path: 'rest-export/service-engg-jobs-bar'
+  defaults: { _controller: '\Drupal\shm_d3_visualization\Controller\CustomRestExports:getServiceEngineerJobs' }
+  methods:  [GET]
+  requirements:
+    _access: 'TRUE'
+
+shm_d3_visualization.admin_jobs_by_country:
+  path: 'rest-export/admin-jobs-by-country'
+  defaults: { _controller: '\Drupal\shm_d3_visualization\Controller\CustomRestExports:getJobsByCountry' }
+  methods:  [GET]
+  requirements:
+    _access: 'TRUE'
+
+shm_d3_visualization.admin_royalty_due_by_month:
+  path: 'rest-export/admin-royalty-due-by-month'
+  defaults: { _controller: '\Drupal\shm_d3_visualization\Controller\CustomRestExports:getRoyaltyDueByMonth' }
+  methods:  [GET]
+  requirements:
+    _access: 'TRUE'
+
+shm_d3_visualization.branch_update:
+  path: 'batch/branch-update'
+  defaults: { _controller: '\Drupal\shm_d3_visualization\Controller\CustomRestExports:branchUpdateBatch' }
+  methods:  [GET]
+  requirements:
+    _access: 'TRUE'
+
+shm_d3_visualization.admin_jobs_by_month:
+  path: 'rest-export/admin-jobs-by-month'
+  defaults: { _controller: '\Drupal\shm_d3_visualization\Controller\CustomRestExports:getAdminJobsByMonth' }
+  methods:  [GET]
+  requirements:
+    _access: 'TRUE'

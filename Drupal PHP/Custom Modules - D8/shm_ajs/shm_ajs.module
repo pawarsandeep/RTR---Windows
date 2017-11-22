@@ -1,0 +1,27 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Sandeep
+ * Date: 7/19/2017
+ * Time: 12:24 PM
+ */
+
+/**
+ * Implements hook_theme()
+ */
+/**
+ * Implements hook_theme().
+ */
+function shm_ajs_theme($existing, $type, $theme, $path)
+{
+    return array(
+        'liferaft_new_job' => array(
+            'template'=>'new-liferaft-job',
+            'variables'=> array('fields'=>NULL),
+        ),
+		 'condemnation_report' => array(
+            'template'=>'new-condemnation-job',
+            'variables'=> array('fields'=>NULL),
+        ),
+    );
+}

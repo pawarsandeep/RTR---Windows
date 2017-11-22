@@ -1,0 +1,37 @@
+<?php
+
+function ceir_clear_vantage_install(){
+
+  if(!db_table_exists('clear_vantage')){
+  	drupal_install_schema('clear_vantage');
+
+  }
+
+
+}
+
+function ceir_clear_vantage_schema(){
+
+	$schema['clear_vantage'] = array(
+	  'description' => 'Ceir clear vantage Integration configuration',
+	  'fields' => array(
+	  'cv_login' => array(
+	  	'description' => 'clear vantage login url',
+	  	'type' => 'varchar',
+	  	'length' => '512',
+	     'default' => '', ),
+	  'cv_new_account'	=> array(
+	  	'descritopn' => 'Clear vantage new user in clear vantage',
+		'type' => 'varchar',
+	  	'length' => '512',
+	    'default' => '', ),
+	  'cv_password'	=> array(
+	  	'descritopn' => 'Clear vantage forgot password',
+		'type' => 'varchar',
+	  	'length' => '512',
+	    'default' => '', ),
+	  )
+
+	);
+return $schema;
+}

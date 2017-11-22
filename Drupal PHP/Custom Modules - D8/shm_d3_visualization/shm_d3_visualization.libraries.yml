@@ -1,0 +1,67 @@
+shm_d3_visualization:
+  version: 4.3
+  js:
+    lib/d3/d3.js: {}
+
+pie_chart_jobs_admin:
+  version: 1.x
+  js:
+    lib/admin/pie_chart_jobs.js: {}
+  dependencies:
+    - shm_d3_visualization/shm_d3_visualization
+
+pie_chart_invoice_this_month_admin:
+  version: 1.x
+  js:
+    lib/admin/pie_chart_invoice_this_month.js: {}
+  dependencies:
+    - shm_d3_visualization/shm_d3_visualization
+
+pie_chart_invoice_total_admin:
+  version: 1.x
+  js:
+    lib/admin/pie_chart_invoice_total.js: {}
+  dependencies:
+    - shm_d3_visualization/shm_d3_visualization
+
+bar_chart_jobs_by_month_service_engg:
+  version: 1.x
+  js:
+    lib/service_engineer/bar_chart_jobs_by_month.js: {}
+  dependencies:
+    - shm_d3_visualization/shm_d3_visualization
+   
+pie_chart_jobs_service_engg:
+  version: 1.x
+  js:
+    lib/service_engineer/pie_chart_jobs_service_engg.js: {}
+  dependencies:
+    - shm_d3_visualization/shm_d3_visualization
+
+bar_chart_jobs_by_country_admin:
+  version: 1.x
+  js:
+    lib/admin/bar_chart_jobs_by_country.js: {}
+  dependencies:
+    - shm_d3_visualization/shm_d3_visualization
+    
+bar_chart_jobs_by_branch_admin:
+  version: 1.x
+  js:
+    lib/admin/bar_chart_jobs_by_branch_admin.js: {}
+  dependencies:
+    - shm_d3_visualization/shm_d3_visualization
+
+bar_chart_royalty_due_by_month_admin:
+  version: 1.x
+  js:
+    lib/admin/bar_chart_royalty_due_by_month.js: {}
+  dependencies:
+    - shm_d3_visualization/shm_d3_visualization
+
+bar_chart_jobs_by_month_admin:
+  version: 1.x
+  js:
+    lib/admin/bar_chart_jobs_by_month_admin.js: {}
+  dependencies:
+    - shm_d3_visualization/shm_d3_visualization

@@ -1,0 +1,580 @@
+<?php
+
+/**
+  * @file
+  * Enable member login and integration with Clear Vantage
+  */
+
+
+/*
+function template_preprocess_member_login(&$vars) {
+
+  $vars['intro_text'] = t('Enter your CEIR/IAEE username and password below.');
+  $vars['forgot_cv_credentials'] = t('Forgot username or password?');
+  $vars['create_cv_account'] = t('Register here');
+}
+*/
+
+/**
+  * Implement hook_ menu().
+  */
+function ceir_clear_vantage_menu(){
+// Login for clear vantage.
+  $items = array();
+
+
+    $items['member/login'] = array(
+     'title' => 'MEMBER LOGIN',
+	 'access callback' => true,
+     'page callback' => 'drupal_get_form',
+     'page arguments' => array('member_login'),
+      );
+
+
+  $items['admin/config/clearvantage'] = array(
+  	'title' =>'ClearVantage',
+  	'description' => 'Integration of ClearVantage with Drupal system',
+   	'page callback' => 'drupal_get_form',
+  	'page arguments' => array('clear_vantage_configure'),
+  	'access arguments' => array('administer users'),
+    );
+
+  return $items;
+}
+
+/**
+  * Display form on member login page.
+  */
+function member_login($form, &$form_state){
+  global $user;
+
+  // Display login form:
+
+   if ($user->uid) {
+    drupal_goto('user/' . $user->uid);
+   }
+
+   $form['name'] = array('#type' => 'textfield',
+    '#title' => t('User Name'),
+    '#size' => 60,
+    '#maxlength' => USERNAME_MAX_LENGTH,
+    '#required' => TRUE,
+  );
+
+  $form['pass'] = array('#type' => 'password',
+    '#title' => t('Password'),
+    '#description' => t('Enter the password that accompanies your username.'),
+    '#required' => TRUE,
+  );
+  $form['#submit'][]= 'clear_vantage_submit';
+  $form['#validate'] = clear_vantage_user_validators();
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array('#type' => 'submit', '#value' => t('Log in'));
+  return $form;
+}
+
+function clear_vantage_user_validators() {
+
+  return array('user_login_name_validate', 'clear_vantage_user_authenticate', 'user_login_final_validate');
+
+}
+
+
+function clear_vantage_user_authenticate($form, &$form_state){
+
+  try {
+  $clear_vantage_username = $form_state['values']['name'];
+  $clear_vantage_password = $form_state['values']['pass'];
+  $clear_vantage_user_member = user_role_load_by_name('Member');
+  $clear_vantage_response_values = array();	  					// to store user field values from clear vantage response
+  $clear_vantage_user_roles = array();
+  $clear_vantage_user_field = array();
+  $cv_login_url_main =  variable_get('end_point');
+  $cv_login_url_trail = "&INCLUDEADDR=&WMT=None&WRP=loginaccepted.xml&WDP=logindenied.xml";
+  $clear_vantage_login_requst_url = $cv_login_url_main."?WEBUSERID=".urlencode($clear_vantage_username)."&WEBUSERPASSWORD=".urlencode($clear_vantage_password).$cv_login_url_trail;
+  $curl = curl_init();
+  curl_setopt($curl, CURLOPT_URL, $clear_vantage_login_requst_url);
+  curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+  $response = curl_exec($curl);
+  $response_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+  $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+  curl_close($curl);
+  $form_state['response'] = $response;
+  if($httpCode == 200){
+    $response_value = new SimpleXMLElement($response);
+
+    if($response_value->LoginStatus == "Accepted" ){
+
+	$account = user_load_by_name($clear_vantage_username);
+
+	$clear_vantage_response_values['email'] = (string) $response_value->MemberData->email;
+	$clear_vantage_response_values['memberid'] = (string) $response_value->MemberData->memberid;
+	$clear_vantage_response_values['orgcd'] = (string) $response_value->MemberData->orgcd;
+	$clear_vantage_response_values['province'] = (string) $response_value->MemberData->chapterid;
+	$clear_vantage_response_values['first_name'] = (string) $response_value->MemberData->firstname;
+	$clear_vantage_response_values['last_name'] = (string) $response_value->MemberData->lastname;
+	$clear_vantage_response_values['member_type'] = (string) $response_value->MemberData->membertype;
+	$clear_vantage_response_values['is_member'] = (string)$response_value->MemberData->ismember;
+	$clear_vantage_response_values['paid_thru'] = (string)$response_value->MemberData->PaidThru;
+
+    if($account) {
+
+      $form_state['uid'] = $account->uid;
+      $clear_vantage_user_field = compare_cv_response_values($account, $clear_vantage_response_values);
+	  if (!empty($clear_vantage_response_values['is_member']) && isset($clear_vantage_response_values['is_member'])){
+
+        if($clear_vantage_response_values['is_member'] == 'Y'){
+
+         if(!empty($clear_vantage_response_values['paid_thru']) && isset($clear_vantage_response_values['paid_thru'])){
+
+             $clear_vantage_user_field['roles'] = (new DateTime("now") <= new DateTime($clear_vantage_response_values['paid_thru'])? add_member_role_to_user($account, 'Member') : remove_member_role_from_user($account, 'Member'));
+          }
+          else{
+
+          	 $clear_vantage_user_field['roles'] = add_member_role_to_user($account, 'Member');
+          }
+
+		}
+
+		else{
+
+	      $clear_vantage_user_field['roles'] = remove_member_role_from_user($account, 'Member');
+		}
+	 }
+
+	 user_save($account, $clear_vantage_user_field);
+
+    }
+    else{
+
+      $clear_vantage_new_user_field = cv_set_new_user_fields($clear_vantage_response_values, $clear_vantage_username, $clear_vantage_password );
+
+      if($clear_vantage_response_values['is_member'] == 'Y' && !empty($clear_vantage_response_values['is_member']) && isset($clear_vantage_response_values['is_member']) ){
+
+		if(!empty($clear_vantage_response_values['paid_thru']) && isset($clear_vantage_response_values['paid_thru'])){
+
+		  $clear_vantage_new_user_field['roles'] = (new DateTime("now") <= new DateTime($clear_vantage_response_values['paid_thru'])? array(DRUPAL_AUTHENTICATED_RID => 'authenticated user', $clear_vantage_user_member->rid => 'Member',) : $clear_vantage_new_user_field['roles'] = array(DRUPAL_AUTHENTICATED_RID => 'authenticated user', ));
+      	}
+      	else{
+		  $clear_vantage_new_user_field['roles'] = array(DRUPAL_AUTHENTICATED_RID => 'authenticated user', $clear_vantage_user_member->rid => 'Member',);
+      	}
+	  }
+
+     else{
+
+	   $clear_vantage_new_user_field['roles'] = array(DRUPAL_AUTHENTICATED_RID => 'authenticated user', );
+	 }
+      $account = user_save('', $clear_vantage_new_user_field);
+	  if ($account) {
+
+		$form_state['uid'] = $account->uid;
+
+	  }
+
+	}
+}
+
+  else{
+
+  	$form_state['uid'] = user_authenticate($clear_vantage_username, $clear_vantage_password);
+
+	if($form_state['uid'] == FALSE){
+
+	  watchdog('ceir_clear_vantage', 'response: %response for user %name', array('%response' => (string)($response), '%name' => $clear_vantage_username));
+
+	}
+  }
+}
+
+else{
+
+  form_set_error('name', "The website encountered an unexpected error and the site support staff has been notified. Please try again later.");
+
+  $language = language_default();
+  $to = variable_get('clear_vantage_mail');
+  $from = variable_get('site_mail');
+  $send = TRUE;
+  $module = 'ceir_clear_vantage';
+  $key = 'cv_error_mail';
+  $result = drupal_mail($module, $key, $to, $language, NULL, $from, $send);
+
+}
+  }
+  catch (Exception $ex) {
+    form_set_error('name', "Currently we are facing difficulty logging you in and the site support staff has been notified. Please try again later.");
+    $language = language_default();
+    $to = variable_get('clear_vantage_mail');
+    $from = variable_get('site_mail');
+    $send = TRUE;
+    $module = 'ceir_clear_vantage';
+    $key = 'exception_mail';
+    $params['response'] = $response;
+    $result = drupal_mail($module, $key, $to, $language, $params, $from, $send);
+    watchdog('ceir_clear_vantage', 'Invalid Response: %response for user %name', array('%response' => (string)($response), '%name' => $clear_vantage_username),  $severity = WATCHDOG_ERROR);
+  }
+
+
+}
+
+function cv_set_new_user_fields(&$clear_vantage_response_values, $clear_vantage_username, $clear_vantage_password ){
+
+  $clear_vantage_user_field =array();
+
+  $clear_vantage_user_field['name'] = $clear_vantage_username;
+  $clear_vantage_user_field['pass'] = $clear_vantage_password;
+  $clear_vantage_user_field['status'] = 1;
+
+  // Comapare member id  from response values
+  if( !empty($clear_vantage_response_values['memberid']) && isset($clear_vantage_response_values['is_member'])){
+
+      $clear_vantage_user_field['field_id'] =  array('und' => array(0 => array('value' => $clear_vantage_response_values['memberid'])));
+  }
+
+  // Compare organisation id from response values
+  if( !empty($clear_vantage_response_values['orgcd']) && isset($clear_vantage_response_values['orgcd'])){
+
+         $clear_vantage_user_field['field_co_id'] =  array('und' => array(0 => array('value' => $clear_vantage_response_values['orgcd'])));
+  }
+
+  // Compare Email from response values
+
+  if( !empty($clear_vantage_response_values['email']) && isset($clear_vantage_response_values['email'])){
+
+	$clear_vantage_user_field['mail'] = $clear_vantage_response_values['email'];
+
+   }
+
+   // Compare First Name from response values
+
+   if( !empty($clear_vantage_response_values['first_name']) && isset($clear_vantage_response_values['first_name'])){
+
+      $clear_vantage_user_field['field_first_name'] = array('und' => array(0 => array('value' => $clear_vantage_response_values['first_name'])));
+
+   }
+
+	// Compare Last Name from response values
+
+   if( !empty($clear_vantage_response_values['last_name']) && isset($clear_vantage_response_values['last_name'])){
+
+   	   $clear_vantage_user_field['field_last_name'] = array('und' => array(0 => array('value' => $clear_vantage_response_values['last_name'])));
+
+   }
+
+	// Compare Member Type from response values
+  if( !empty($clear_vantage_response_values['member_type']) && isset($clear_vantage_response_values['member_type'])){
+
+   	  $clear_vantage_user_field['field_member_type'] = array('und' => array(0 => array('value' => $clear_vantage_response_values['member_type'])));
+  }
+
+	// Compare State from response values
+  if( !empty($clear_vantage_response_values['province']) && isset($clear_vantage_response_values['province'])){
+
+      $clear_vantage_user_field['field_member_state'] = array('und' => array(0 => array('value' => $clear_vantage_response_values['province'])));
+      $clear_vantage_user_field['field_chapter'] = array('und' => array(0 => array('value' => $clear_vantage_response_values['province'])));
+  }
+
+	// Compare Field thru from response values
+  if( !empty($clear_vantage_response_values['paid_thru']) && isset($clear_vantage_response_values['paid_thru'])){
+
+   	  $clear_vantage_user_field['field_paid_thru'] = array('und' => array(0 => array('value' => (new DateTime($clear_vantage_response_values['paid_thru']))->format('Y-m-d H:i:s'), 'date_type' => 'datetime')));
+  }
+
+  return $clear_vantage_user_field;
+
+
+}
+
+function compare_cv_response_values(&$account, &$clear_vantage_response_values){
+
+   $clear_vantage_user_field =array();
+
+  // Comapare member id  from response values
+  if( !empty($clear_vantage_response_values['memberid'])){
+
+    if($account->field_id['und'][0]['value'] == "" || $account->field_id['und'][0]['value'] == null || $account->field_id['und'][0]['value'] != $clear_vantage_response_values['memberid']){
+
+      $clear_vantage_user_field['field_id'] =  array('und' => array(0 => array('value' => $clear_vantage_response_values['memberid'])));
+
+   }
+  }
+
+  // Compare organisation id from response values
+  if( !empty($clear_vantage_response_values['orgcd'])){
+
+    if($account->field_co_id['und'][0]['value'] == "" || $account->field_co_id['und'][0]['value'] == null || $account->field_co_id['und'][0]['value'] != $clear_vantage_response_values['orgcd']){
+
+      $clear_vantage_user_field['field_co_id'] =  array('und' => array(0 => array('value' => $clear_vantage_response_values['orgcd'])));
+
+     }
+  }
+
+  // Compare Email from response values
+
+  if( !empty($clear_vantage_response_values['email'])){
+
+    if($account->mail == "" || $account->mail == null || $account->mail != $clear_vantage_response_values['email']){
+
+	  $clear_vantage_user_field['mail'] = $clear_vantage_response_values['email'];
+     }
+   }
+
+   // Compare First Name from response values
+
+   if( !empty($clear_vantage_response_values['first_name'])){
+
+     if($account->field_first_name['und'][0]['value'] == "" || $account->field_first_name['und'][0]['value'] == null || $account->field_first_name['und'][0]['value'] != $clear_vantage_response_values['first_name']){
+
+      $clear_vantage_user_field['field_first_name'] = array('und' => array(0 => array('value' => $clear_vantage_response_values['first_name'])));
+     }
+   }
+
+	// Compare Last Name from response values
+
+   if( !empty($clear_vantage_response_values['last_name'])){
+
+     if($account->field_last_name['und'][0]['value'] == "" || $account->field_last_name['und'][0]['value'] == null || $account->field_last_name['und'][0]['value'] != $clear_vantage_response_values['last_name']){
+
+	   $clear_vantage_user_field['field_last_name'] = array('und' => array(0 => array('value' => $clear_vantage_response_values['last_name'])));
+
+  	 }
+   }
+
+	// Compare Member Type from response values
+  if( !empty($clear_vantage_response_values['member_type'])){
+
+    if($account->field_member_type['und'][0]['value'] == "" || $account->field_member_type['und'][0]['value'] == null || $account->field_member_type['und'][0]['value'] != $clear_vantage_response_values['member_type']){
+
+  	  $clear_vantage_user_field['field_member_type'] = array('und' => array(0 => array('value' => $clear_vantage_response_values['member_type'])));
+
+    }
+
+  }
+
+	// Compare State from response values
+  if( !empty($clear_vantage_response_values['province'])){
+
+    if($account->field_member_state['und'][0]['value'] == "" || $account->field_member_state['und'][0]['value'] == null || $account->field_member_state['und'][0]['value'] != $clear_vantage_response_values['province']){
+
+      $clear_vantage_user_field['field_member_state'] = array('und' => array(0 => array('value' => $clear_vantage_response_values['province'])));
+
+     }
+
+    if($account->field_chapter['und'][0]['value'] == "" || $account->field_chapter['und'][0]['value'] == null || $account->field_chapter['und'][0]['value'] != $clear_vantage_response_values['province']){
+
+      $clear_vantage_user_field['field_chapter'] = array('und' => array(0 => array('value' => $clear_vantage_response_values['province'])));
+
+     }
+  }
+
+  // Compare Field thru
+  if( !empty($clear_vantage_response_values['paid_thru'])){
+
+    if($account->field_paid_thru['und'][0]['value'] == "" || $account->field_paid_thru['und'][0]['value'] == null || $account->field_paid_thru['und'][0]['value'] != $clear_vantage_response_values['paid_thru']){
+
+  	  $clear_vantage_user_field['field_paid_thru'] = array('und' => array(0 => array('value' => (new DateTime($clear_vantage_response_values['paid_thru']))->format('Y-m-d H:i:s'), 'date_type' => 'datetime')));
+    }
+  }
+
+
+
+  return $clear_vantage_user_field;
+
+}
+
+function add_member_role_to_user(&$account, $member_role){
+  $new_roles = array();
+  $key = array_search($member_role, $account->roles);
+  if($key == FALSE){
+  	$roles = user_roles(TRUE);
+  	$rid = array_search($member_role, $roles);
+  	if ($rid != FALSE) {
+  	  $new_role[$rid] = $member_role;
+	  $new_roles =$account->roles  + $new_role;
+	  return $new_roles;
+  	}
+  }
+  else{
+    return $account->roles;
+  }
+}
+
+function remove_member_role_from_user(&$account, $member_role){
+
+  $key = array_search($member_role, $account->roles);
+  $new_roles = array();
+  if ($key == TRUE) {
+
+  	$roles = user_roles(TRUE);
+  	$rid = array_search($member_role, $roles);
+  	if ($rid != FALSE) {
+  	  foreach($account->roles as $id => $name) {
+        if ($id != $rid) {
+          $new_roles[$id] = $name;
+        }
+      }
+     return $new_roles;
+  	}
+
+  }
+  else{
+
+   return $account->roles;
+  }
+
+
+}
+
+function clear_vantage_submit($form, &$form_state) {
+  global $user;
+  $user = user_load($form_state['uid']);
+  $form_state['redirect'] = 'user/' . $user->uid;
+  user_login_finalize($form_state);
+  watchdog('ceir_clear_vantage', 'response: %response', array('%response' => (string)($form_state['response'])));
+}
+
+
+
+
+function ceir_clear_vantage_theme($existing, $type, $theme, $path){
+
+  $items = array();
+
+  $items['member_login'] = array(
+    'render element' => 'form',
+    'path' => drupal_get_path('module', 'ceir_clear_vantage') . '/templates',
+    'template' => 'member-login',
+  );
+   return $items;
+
+}
+
+
+function clear_vantage_configure(){
+
+  $form =array();
+
+  $form['clear_vantage']= array(
+  	'#title' => 'ClearVantage',
+  	'#type'	=> 'fieldset',
+  	'#prefix' => '<div id="clear-vantage-form"></div>',
+  );
+  $form['clear_vantage']['end_point'] = array(
+	'#type' => 'textfield',
+    '#title' => t('ClearVantge Web Service URL'),
+    '#default_value' => '',
+    '#length' => 512,
+    '#description' => t('Please enter path of ClearVantage web ervice.'),
+    '#required' => TRUE,
+  	'#default_value' => variable_get('end_point'),
+  );
+
+
+  $form['clear_vantage']['cv_name'] = array('#type' => 'textfield',
+    '#title' => t('User Name'),
+    '#size' => 60,
+    '#maxlength' => USERNAME_MAX_LENGTH,
+    '#description' => t('Please enter username/email of ClearVantage.'),
+    '#required' => TRUE,
+  	'#default_value' => variable_get('cv_name'),
+  );
+
+  $form['clear_vantage']['cv_pass'] = array('#type' => 'password',
+    '#title' => t('Password'),
+    '#description' => t('Enter the password that accompanies your username.'),
+    '#required' => TRUE,
+  	'#default_value' => variable_get('cv_pass'),
+  );
+
+  $form['clear_vantage']['cv_submit'] = array('#type' => 'submit',
+  	'#ajax' => array(
+  	  'callback' => 'clear_vantage_url_test_submit',
+  	),
+  	'#value' => t('Test Connection')
+  );
+
+  $form['clear_vantage_mail'] = array(
+  	'#type' => 'textfield',
+  	'#title' => t('Error Notification Email Address'),
+  	'#default_value' => variable_get('clear_vantage_mail'),
+    '#length' => 512,
+  	'#description' => t('Please enter email address..'),
+  );
+
+
+
+
+  return system_settings_form($form);
+
+
+}
+
+function clear_vantage_url_test_submit(&$form, &$form_state){
+
+  $username = $form_state['values']['cv_name'];
+  $password = $form_state['values']['cv_pass'];
+  $cv_login_url_main = $form_state['values']['end_point'];
+  $cv_login_url_trail = "&INCLUDEADDR=&WMT=None&WRP=loginaccepted.xml&WDP=logindenied.xml";
+  $clear_vantage_login_requst_url = $cv_login_url_main."?WEBUSERID=".$username."&WEBUSERPASSWORD=".$password.$cv_login_url_trail;
+  $curl = curl_init();
+  curl_setopt($curl, CURLOPT_URL, $clear_vantage_login_requst_url);
+  curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+  $response = curl_exec($curl);
+  curl_close($curl);
+  $response_value = new SimpleXMLElement($response);
+  if($response_value->LoginStatus == "Accepted" ){
+
+    $commands[] = ajax_command_replace('div#clear-vantage-form', '<div id="clear-vantage-form">Connection Successful!</div>');
+    $commands[] = ajax_command_css('div#clear-vantage-form', array('color'=> '#234600', 'background-color'=> '#f8fff0', 'padding' => '10px 0 10px 15px','border' => '1px solid #be7', ));
+
+
+  }
+  else if($response_value->LoginStatus == "Denied"){
+
+	$commands[] = ajax_command_replace('div#clear-vantage-form', '<div id="clear-vantage-form">Authentication Error. Please check your Username & Password.</div>');
+	$commands[] = ajax_command_css('div#clear-vantage-form', array('color'=> '#b94a48', 'background-color'=> '#f2dede', 'padding' => '10px 0 10px 15px','border' => '1px solid #ebccd1', ));
+  }
+  else{
+
+	$commands[] = ajax_command_replace('div#clear-vantage-form', '<div id="clear-vantage-form">Authentication Error. Please check that your Endpoint URL.</div>');
+	$commands[] = ajax_command_css('div#clear-vantage-form', array('color'=> '#b94a48', 'background-color'=> '#f2dede', 'padding' => '10px 0 10px 15px','border' => '1px solid #ebccd1', ));
+  }
+
+   return array(
+      '#type' => 'ajax',
+      '#commands' => $commands,
+    );
+
+}
+
+
+function ceir_clear_vantage_mail($key, &$message, $params){
+	global $base_url;
+	if($base_url == "http://dev.ceir.org") {
+       $env='Development';
+    }
+    else
+    $env='Production';
+
+	switch ($key) {
+
+		case 'cv_error_mail':
+		  $message['subject'] = t('ClearVantage is down');
+		  $message['body'][] = "Hi DevTeam,";
+		  $message['body'][] = "The CEIR Website is not able to connect to the ClearVantage Web service.";
+		  $message['body'][] = "ClearVantage may be down, or the end point URL entered at 'admin/config/clearvantage' may be incorrect.";
+		  $message['body'][] = "Environment: ".$env."\nWebsite URL: ".$base_url;
+		  $message['body'][] = "Thanks,\n\nCEIR Team";
+
+		  break;
+		case 'exception_mail':
+		  $message['subject'] = t('Exception in ClearVantage');
+          $message['body'][] = "Hi DevTeam,";
+		  $message['body'][] = "The CEIR Website has encountered an error in ClearVantage.";
+		  $message['body'][] = "Response may be incorrect, or the end point URL entered at 'admin/config/clearvantage' may be incorrect.";
+		  $message['body'][] = "Environment: ".$env."\nWebsite URL: ".$base_url;
+		  $message['body'][] = "Response: \n<pre>". htmlspecialchars($params['response'])."</pre>\n\n";
+		  $message['body'][] = "Thanks,\n\nCEIR Team";
+
+	}
+
+}

@@ -1,0 +1,8 @@
+name = Checkout login
+description = Enforce user to login using clear vantage credentials before checkout 
+dependencies[] = commerce_checkout
+dependencies[] = commerce_order
+dependencies[] = ceir_clear_vantage
+package = Ceir
+core = 7.x
+

@@ -1,0 +1,5 @@
+shm_mmr:
+  version: 1.0
+  css:
+    theme:
+      lib/mmr_pdf.css: {}

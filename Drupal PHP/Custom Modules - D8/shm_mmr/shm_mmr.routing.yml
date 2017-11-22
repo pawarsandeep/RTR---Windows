@@ -1,0 +1,24 @@
+shm_mmr.generate_report:
+  path: '/mmr/generate-report'
+  defaults:
+    _form: '\Drupal\shm_mmr\Form\GenerateReport'
+    _title: 'Generate Report'
+  requirements:
+    _access: 'TRUE'
+
+shm_mmr.mmr_settings:
+  path: '/admin/config/mmr/manufacturer-report'
+  defaults:
+    _form: '\Drupal\shm_mmr\Form\MmrSettings'
+    _title: 'Manufacturer Report Settings'
+  requirements:
+    _access: 'TRUE'
+
+shm_mmr.send_report:
+  path: 'mmr/send/{eform_submission}'
+  defaults:
+    _controller: '\Drupal\shm_mmr\MmrController::sendReport'
+    _title: 'Send Report'
+  requirements:
+    _access: 'TRUE'
+

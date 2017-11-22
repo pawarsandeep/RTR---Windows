@@ -1,0 +1,79 @@
+<?php
+
+/**
+ * @file
+ * Adds inline discount conditions to 'rules_edpa_discount_custom_rule' for 'discount_edpa_discount' discount
+ */
+
+/**
+ * Alters form to call 'ceir_commerce_discount_form_submit' method on submission.
+ */
+function ceir_edpa_discount_form_commerce_discount_form_alter(&$form, $form_state) {
+  $form['actions']['submit']['#submit'][] = 'ceir_edpa_discount_form_submit';
+}
+
+/**
+ * Old rule is replaced by a rule with new inline conditions. Event and Actions are same as old rule. 
+ */
+function ceir_edpa_discount_form_submit(&$form, &$form_state) {
+  $discount = entity_ui_form_submit_build_entity($form, $form_state);
+  if($discount->name == 'discount_edpa_discount') {
+    $wrapper = entity_metadata_wrapper('commerce_discount', $discount);
+    $wrapper_properties = $wrapper->getPropertyInfo();
+    $my_rule = rules_config_load('rules_edpa_discount_custom_rule');
+    $new_rule = rules_reaction_rule();
+	
+    if($my_rule) {
+      $new_rule->condition('commerce_discount_compatibility_check', array(
+        'commerce_order:select' => 'commerce-line-item:order',
+        'commerce_discount' => $discount->name,
+      ));
+	
+	  $new_rule->condition('commerce_coupon_discount_coupon_codes_exist_on_order', array(
+	    'commerce_order:select' => 'commerce-line-item:order',
+	    'commerce_discount' => $discount->name,
+	  ));
+	
+	  $new_rule->condition('entity_has_field', array(
+	    'entity:select' => 'commerce-line-item',
+	    'field' => 'commerce_product',
+	  ));
+	
+      //Add inline conditions to new rule
+	  foreach ($wrapper_properties as $field_name => $property) {
+	    if (stripos($property['type'], 'inline_conditions') !== FALSE) {
+		  inline_conditions_build($new_rule, $wrapper->$field_name->value());
+  	    }
+	  }
+	
+	  $tmp_actions = $my_rule->actions();
+
+  	  //Copy actions from old rule.
+	  foreach($tmp_actions as $delta) {
+	    $new_rule->action($delta);
+	  }
+
+	  //Copy events from old rule.
+	  $events = $my_rule->events();
+	  foreach($events as $delta) {
+	    $new_rule->event($delta);
+	  }
+	
+	  $new_rule->label = $my_rule->label;
+	  $new_rule->name = $my_rule->name;
+	  $new_rule->active = $my_rule->active;
+	  $new_rule->weight = $my_rule->weight;
+	  $new_rule->tags = $my_rule->tags;
+	  //delete old rule.
+	  rules_config_delete(array($my_rule->id));
+  	  //Save new rule
+	  $new_rule->save();
+	  unset($my_rule);
+	  unset($new_rule);
+    }
+    else {
+    	drupal_set_message(t('No custom rule fount. Please create a custom rule with machine name "edpa_discount_custom_rule".'), 'warning');
+    }
+  }
+  
+}
